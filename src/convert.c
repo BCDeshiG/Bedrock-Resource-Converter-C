@@ -40,13 +40,6 @@ char *initArg(char *arg, char msg[]){
 	return arg;
 }
 
-void stripCHAR(char *string, char *toStrip){
-	char *stripME = strstr(string, toStrip);
-	if (stripME != NULL){
-		strcpy(stripME, "\0");
-	}
-}
-
 void startConversion(){
 	parseZip(arg1);
 	//parseManifest();

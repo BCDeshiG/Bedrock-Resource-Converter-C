@@ -27,10 +27,9 @@ void parseZip(char *arg1){
 		strcpy(tempPath, dotDOT);
 		strcat(tempPath, zipName);
 
+		// Finally unzip archive
 		chdir(folderPath); // Enter new folder
-		puts("BEEP");
 		extract(tempPath); // Unzip contents into folder
-		puts("BOOP");
 		chdir(".."); // Exit new folder
 
 		// No longer needed strings
