@@ -1,0 +1,5 @@
+missing.txt
+*.zip
+*.mcpack
+./src/obj/*.o
+*.py
