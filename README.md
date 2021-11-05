@@ -11,11 +11,11 @@
 * * Install libzip (Ubuntu): `sudo apt install libzip`
 * Note: WIP, not all entities are converted (see `fixme.txt`)
 
-# Build Instructions (Linux)
+## Build Instructions (Linux)
 
 * `cd src/`
 * `make`
 
-# Build Instructions (Windows)
+## Build Instructions (Windows)
 
 * I have no clue, sorry
