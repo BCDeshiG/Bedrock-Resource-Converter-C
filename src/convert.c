@@ -3,7 +3,8 @@
 #include <stdlib.h>
 
 #include "convert.h"
-#include "extractZIP.h"
+#include "helper.h"
+#include "parse.h"
 
 int main(int argc, char *argv[]){
 	if (argc == 1){ // No arguments supplied
@@ -35,35 +36,18 @@ char *initArg(char *arg, char msg[]){
 	puts(msg); // Text prompt
 	fgets(arg, MAX_PATH_LENGTH, stdin); // Get input
 	arg = realloc(arg, (strlen(arg)+1)*sizeof(char)); // Shrink
-	// Remove newline from end if present
-	char *stripME = strstr(arg, "\n");
-	if (stripME != NULL){
-		strcpy(stripME, "\0");
-	}
+	stripCHAR(arg, "\n"); // Remove newline from end if present
 	return arg;
 }
 
+void stripCHAR(char *string, char *toStrip){
+	char *stripME = strstr(string, toStrip);
+	if (stripME != NULL){
+		strcpy(stripME, "\0");
+	}
+}
+
 void startConversion(){
-	parseZip();
+	parseZip(arg1);
 	//parseManifest();
 }
-
-void parseZip(){
-	char *fileExt = strrchr(arg1, '.');	// Check file extension if present
-	if (fileExt == NULL){return;} // No dots in sight so probably folder
-	else if (!strcmp(fileExt, ".zip") || !strcmp(fileExt, ".mcpack")){
-		extract(arg1);
-	}
-	else{return;} // Not a zip file
-}
-
-/*
-void parseManifest(){
-	//open file then grab description from json
-	char manPath[];
-	FILE *filePTR = fopen(, "r");
-	if(filePTR==NULL){
-        fprintf(stderr, "Where the hell?\n");
-        exit(1);
-    }
-}*/

@@ -2,10 +2,10 @@ INCDIR = ../include
 OBJDIR = ./obj
 CFLAGS=-I$(INCDIR)
 
-_DEPS = extractZIP.h convert.h #fixTextures.h
+_DEPS = convert.h extractZIP.h helper.h parse.h #fixTextures.h
 DEPS = $(patsubst %,$(INCDIR)/%,$(_DEPS))
 
-_OBJ  = extractZIP.o convert.o #fixTextures.o
+_OBJ  = convert.o extractZIP.o helper.o parse.o #fixTextures.o
 OBJ = $(patsubst %,$(OBJDIR)/%,$(_OBJ))
 
 LIBS = -lzip
