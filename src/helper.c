@@ -16,8 +16,8 @@ void safe_create_dir(const char *dir)
     }
 }
 
-void stripCHAR(char *string, char *toStrip){
-	char *stripME = strstr(string, toStrip);
+void stripCHAR(char *string, char toStrip){
+	char *stripME = strrchr(string, toStrip);
 	if (stripME != NULL){
 		strcpy(stripME, "\0");
 	}

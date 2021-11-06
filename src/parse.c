@@ -17,15 +17,22 @@ void parseZip(char *arg1){
 		short newLen = strlen(arg1)-strlen(fileExt)+1; // Length without file ext
 		char *folderPath = malloc(newLen*sizeof(char)); // Folder to extract to
 		memcpy(folderPath, arg1, newLen*sizeof(char)); // Copy bytes except file ext
-		stripCHAR(folderPath, "."); // Ensure proper size
+		stripCHAR(folderPath, '.'); // Ensure proper size
 		safe_create_dir(folderPath); // Create containing folder
 
-		// Zip archive isn't in new folder
-		char *zipName = basename(arg1); // Store name of zip archive
-		char *tempPath = malloc((strlen(zipName)+4)*sizeof(char));
-		char dotDOT[] = "../";
-		strcpy(tempPath, dotDOT);
-		strcat(tempPath, zipName);
+		// Determine if relative or absolute path
+		char *tempPath = malloc((strlen(arg1)+4)*sizeof(char));
+		switch (arg1[0]){
+			case '/': // Absolute path so just use that
+				puts(arg1);
+				strcpy(tempPath, arg1);
+				break;
+			default: // Relative path so correct for new dir
+				char dotDOT[] = "../";
+				strcpy(tempPath, dotDOT);
+				strcat(tempPath, arg1);
+				break;
+		}
 
 		// Finally unzip archive
 		chdir(folderPath); // Enter new folder
@@ -34,10 +41,9 @@ void parseZip(char *arg1){
 
 		// No longer needed strings
 		free(folderPath);
-		free(zipName);
 		free(tempPath);
 
-		stripCHAR(arg1, "."); // Now working with the folder
+		stripCHAR(arg1, '.'); // Now working with the folder
 	}
 	else{return;} // Not a zip file
 }

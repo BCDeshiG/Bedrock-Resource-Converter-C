@@ -36,7 +36,7 @@ char *initArg(char *arg, char msg[]){
 	puts(msg); // Text prompt
 	fgets(arg, MAX_PATH_LENGTH, stdin); // Get input
 	arg = realloc(arg, (strlen(arg)+1)*sizeof(char)); // Shrink
-	stripCHAR(arg, "\n"); // Remove newline from end if present
+	stripCHAR(arg, '\n'); // Remove newline from end if present
 	return arg;
 }
 
