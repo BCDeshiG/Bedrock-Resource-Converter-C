@@ -41,6 +41,7 @@ char *initArg(char *arg, char msg[]){
 }
 
 void startConversion(){
+	safe_create_dir(arg2);
 	parseZip(arg1);
-	//parseManifest();
+	parseManifest(arg1, arg2);
 }
