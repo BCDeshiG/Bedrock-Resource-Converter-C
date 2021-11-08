@@ -50,6 +50,5 @@ void dirSPACES(char *string){
 		strcat(string, "\ "); // Add escaped space
 		strcat(string, token); // Add next chunk
 	}
-	puts(string);
 	free(tempSTR);
 }
