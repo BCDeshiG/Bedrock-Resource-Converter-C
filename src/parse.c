@@ -82,6 +82,8 @@ void parseManifest(char *arg1, char *arg2){
 			strcat(manPath, entry);
 			strcat(manPath, "/manifest.json");
 
+			free(entry); // No longer needed
+
 			// Check if manifest in 'folder'
 			filePTR = fopen(manPath, "r"); 
 			if(filePTR == NULL){ // Weird folder structure?
@@ -113,40 +115,38 @@ void parseManAUX(FILE *filePTR, char *arg2){
 		fprintf(stderr, "Unable to parse manifest");
 		exit(1);
 	}
-	else{
-		// Grab pack description
-		cJSON *head = cJSON_GetObjectItemCaseSensitive(json, "header");
-		cJSON *desc = cJSON_GetObjectItemCaseSensitive(head, "description");
-		char *descSTR = cJSON_Print(desc); // Store description as string
-		if (descSTR == NULL){
-			fprintf(stderr, "Manifest is invalid\n");
-			exit(1);
-		}
-
-		// Generate `pack.mcmeta` file
-		char *outSTR = malloc((strlen(descSTR)+44)*sizeof(char));
-		strcpy(outSTR, "{\"pack\": {\"description\": ");
-		strcat(outSTR, descSTR);
-		strcat(outSTR, ",\"pack_format\": 7}}");
-
-		// Free up resources
-		cJSON_Delete(json);
-		free(descSTR);
-
-		// Write to output file
-		char *outPath = malloc((strlen(arg2)+12)*sizeof(char));
-		strcpy(outPath, arg2);
-		strcat(outPath, "/pack.mcmeta");
-		FILE *outPTR = fopen(outPath, "w");
-		if (outPTR == NULL){
-			fprintf(stderr, "Unable to write output file\n");
-			exit(1);
-		}
-		fputs(outSTR, outPTR);
-
-		// Free up resources
-		fclose(outPTR);
-		free(outPath);
-		free(outSTR);
+	// Grab pack description
+	cJSON *head = cJSON_GetObjectItemCaseSensitive(json, "header");
+	cJSON *desc = cJSON_GetObjectItemCaseSensitive(head, "description");
+	char *descSTR = cJSON_Print(desc); // Store description as string
+	if (descSTR == NULL){
+		fprintf(stderr, "Manifest is invalid\n");
+		exit(1);
 	}
+	
+	// Generate `pack.mcmeta` file
+	char *outSTR = malloc((strlen(descSTR)+44)*sizeof(char));
+	strcpy(outSTR, "{\"pack\": {\"description\": ");
+	strcat(outSTR, descSTR);
+	strcat(outSTR, ",\"pack_format\": 7}}");
+	
+	// Free up resources
+	cJSON_Delete(json);
+	free(descSTR);
+	
+	// Write to output file
+	char *outPath = malloc((strlen(arg2)+12)*sizeof(char));
+	strcpy(outPath, arg2);
+	strcat(outPath, "/pack.mcmeta");
+	FILE *outPTR = fopen(outPath, "w");
+	if (outPTR == NULL){
+		fprintf(stderr, "Unable to write output file\n");
+		exit(1);
+	}
+	fputs(outSTR, outPTR);
+	
+	// Free up resources
+	fclose(outPTR);
+	free(outPath);
+	free(outSTR);
 }

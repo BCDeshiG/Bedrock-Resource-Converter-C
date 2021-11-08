@@ -38,7 +38,10 @@ void dirSPACES(char *string){
 		numTokens++;
 		token = strtok(NULL, sp); // Get next chunk
 	}
-	if (numTokens == 0){return;} // No splits happened
+	if (numTokens == 1){ // No splits happened
+		free(tempSTR); // Wasn't needed after all
+		return;
+	}
 
 	// Resize to fit escape characters
 	string = realloc(string, (length+numTokens)*sizeof(char));
