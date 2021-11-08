@@ -7,15 +7,15 @@
 * [Original project link here](https://github.com/BCDeshiG/Bedrock-Resource-Converter-PY)
 
 * Usage: `./br-convert packFolder destinationFolder`
-* Requires libzip to be installed
-* * Install libzip (Ubuntu): `sudo apt install libzip`
 * Note: WIP, not all entities are converted (see `fixme.txt`)
+
+## Libaries
+
+* [libzip](https://libzip.org/documentation/libzip.html)
+* * Get this from your package manager
+* [cJSON](https://github.com/DaveGamble/cJSON)
+* * Included in source as a header file
 
 ## Build Instructions (Linux)
 
-* `cd src/`
-* `make`
-
-## Build Instructions (Windows)
-
-* I have no clue, sorry
+* Enter the `src` directory and run `make`
