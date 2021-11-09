@@ -17,14 +17,14 @@ void parseZip(char *arg1){
 		// Ensure containing folder
 		// FIXME Hacky solution, preferably don't use chdir
 		short argLen = strlen(arg1);
-		short newLen = argLen-strlen(fileExt)+1; // Length without file ext
-		char *folderPath = malloc(newLen*sizeof(char)); // Folder to extract to
+		short newLen = argLen-strlen(fileExt); // Length without file ext
+		char *folderPath = calloc(newLen+1, sizeof(char)); // Folder to extract to
 		memcpy(folderPath, arg1, newLen*sizeof(char)); // Copy bytes except file ext
 		stripCHAR(folderPath, '.'); // Ensure proper size
 		safe_create_dir(folderPath); // Create containing folder
 
 		// Determine if relative or absolute path
-		char *tempPath = malloc((argLen+4)*sizeof(char));
+		char *tempPath = calloc(argLen+5, sizeof(char));
 		switch (arg1[0]){
 			case '/': // Absolute path so just use that
 				strcpy(tempPath, arg1);
@@ -53,9 +53,10 @@ void parseZip(char *arg1){
 	}
 }
 
-void parseManifest(char *arg1, char *arg2){
+char *parseManifest(char *arg1, char *arg2){
 	short argLen = strlen(arg1);
-	char *manPath = malloc((strlen(arg1)+15)*sizeof(char));
+	char *manPath = calloc(argLen+15, sizeof(char));
+	char *rootPath = NULL; // Stores path of folder containing manifest
 	strcpy(manPath, arg1);
 	strcat(manPath, "/manifest.json");
 
@@ -63,7 +64,7 @@ void parseManifest(char *arg1, char *arg2){
 	FILE *filePTR = fopen(manPath, "r");
 	if(filePTR == NULL){
 		DIR *dir = opendir(arg1); // Not in pack root folder so start searching
-		char *entry = malloc(128*sizeof(char)); // Store name of sub-directory
+		char *entry = calloc(128, sizeof(char)); // Store name of sub-directory
 		if (dir == NULL){
 			fprintf(stderr, "Unable to locate manifest file\n");
 			exit(1);
@@ -71,18 +72,22 @@ void parseManifest(char *arg1, char *arg2){
 		else{
 			// Lazy search for manifest
 			strcpy(entry, readdir(dir)->d_name); // Try to enter 1st thing we see
-			entry = realloc(entry, strlen(entry)*sizeof(char)); // Shrink to size
+			entry = realloc(entry, (strlen(entry)+1)*sizeof(char)); // Shrink to size
 			dirSPACES(entry); // Escape space from path
 			closedir(dir); // No longer need to look at whole folder
 
 			// Kinda just assume what we found was a folder
-			manPath = realloc(manPath, (argLen+strlen(entry)+16));
+			manPath = realloc(manPath, argLen+strlen(entry)+15);
 			strcpy(manPath, arg1);
+			free(arg1); // Gonna replace this in a sec
 			strcat(manPath, "/");
 			strcat(manPath, entry);
-			strcat(manPath, "/manifest.json");
-
 			free(entry); // No longer needed
+
+			// Remember folder path
+			rootPath = calloc(strlen(manPath)+1, sizeof(char));
+			strcpy(rootPath, manPath);
+			strcat(manPath, "/manifest.json");
 
 			// Check if manifest in 'folder'
 			filePTR = fopen(manPath, "r"); 
@@ -94,11 +99,17 @@ void parseManifest(char *arg1, char *arg2){
 	}
 	free(manPath); // No longer needed since we have the file
 	parseManAUX(filePTR, arg2); // Actually start parsing the manifest
+	if (rootPath != NULL){
+		return rootPath; // Manifest was in sub-folder
+	}
+	else{
+		return arg1; // Manifest was found immediately
+	}
 }
 
 void parseManAUX(FILE *filePTR, char *arg2){
 	// Read contents of json file
-	char *buffer = malloc(1024);
+	char *buffer = calloc(1024, sizeof(char));
 	fread(buffer, 1024, 1, filePTR);
 	cJSON *json = cJSON_Parse(buffer); // Store json
 	// Free resources
@@ -125,7 +136,7 @@ void parseManAUX(FILE *filePTR, char *arg2){
 	}
 	
 	// Generate `pack.mcmeta` file
-	char *outSTR = malloc((strlen(descSTR)+44)*sizeof(char));
+	char *outSTR = calloc(strlen(descSTR)+44, sizeof(char));
 	strcpy(outSTR, "{\"pack\": {\"description\": ");
 	strcat(outSTR, descSTR);
 	strcat(outSTR, ",\"pack_format\": 7}}");
@@ -135,7 +146,7 @@ void parseManAUX(FILE *filePTR, char *arg2){
 	free(descSTR);
 	
 	// Write to output file
-	char *outPath = malloc((strlen(arg2)+12)*sizeof(char));
+	char *outPath = calloc(strlen(arg2)+12, sizeof(char));
 	strcpy(outPath, arg2);
 	strcat(outPath, "/pack.mcmeta");
 	FILE *outPTR = fopen(outPath, "w");

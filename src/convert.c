@@ -22,8 +22,8 @@ int main(int argc, char *argv[]){
 		exit(1);
 	}
 	else{
-		arg1 = malloc(strlen(argv[1]));
-		arg2 = malloc(strlen(argv[2]));
+		arg1 = calloc(strlen(argv[1])+1, sizeof(char));
+		arg2 = calloc(strlen(argv[2])+1, sizeof(char));
 		strcpy(arg1, argv[1]);
 		strcpy(arg2, argv[2]);
 	}
@@ -43,5 +43,5 @@ char *initArg(char *arg, char msg[]){
 void startConversion(){
 	safe_create_dir(arg2);
 	parseZip(arg1);
-	parseManifest(arg1, arg2);
+	arg1 = parseManifest(arg1, arg2);
 }

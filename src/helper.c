@@ -30,7 +30,7 @@ void dirSPACES(char *string){
 	unsigned short length = strlen(string);
 
 	// strtok() modifies so make a copy
-	char *tempSTR = malloc(length*sizeof(char));
+	char *tempSTR = calloc(length, sizeof(char));
 	strcpy(tempSTR, string);
 
 	token = strtok(tempSTR, sp); // Get 1st chunk
@@ -44,7 +44,7 @@ void dirSPACES(char *string){
 	}
 
 	// Resize to fit escape characters
-	string = realloc(string, (length+numTokens)*sizeof(char));
+	string = realloc(string, (length+numTokens+1)*sizeof(char));
 	strcpy(tempSTR, string); // Copy string again
 	token = strtok(tempSTR, sp); // Re-get 1st chunk
 	strcpy(string, token);
