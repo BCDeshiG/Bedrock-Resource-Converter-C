@@ -43,5 +43,27 @@ char *initArg(char *arg, char msg[]){
 void startConversion(){
 	safe_create_dir(arg2);
 	parseZip(arg1);
+	genFolders(arg2);
 	arg1 = parseManifest(arg1, arg2);
+	parseTexts(arg1, arg2);
+}
+
+void genFolders(char *arg2){
+	FILE *filePTR = fopen("../paths.txt", "r");
+	char *buffer = calloc(MAX_PATH_LENGTH, sizeof(char));
+	if (filePTR == NULL){
+		fprintf(stderr, "Unable to grab file paths\n");
+		exit(1);
+	}
+	while (fgets(buffer, MAX_PATH_LENGTH, filePTR) != NULL){
+		stripCHAR(buffer, '\n'); // Remove newline from end if present
+		unsigned short newLen = strlen(arg2)+strlen(buffer);
+		char *tempPath = calloc(newLen+1, sizeof(char)); // Store new folder path
+		strcpy(tempPath, arg2);
+		strcat(tempPath, buffer);
+
+		safe_create_dir(tempPath); // Create new folder
+		free(tempPath); // This folder is done, on to next
+	}
+	free(buffer);
 }

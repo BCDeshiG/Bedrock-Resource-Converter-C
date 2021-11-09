@@ -161,3 +161,40 @@ void parseManAUX(FILE *filePTR, char *arg2){
 	free(outPath);
 	free(outSTR);
 }
+
+void parseTexts(char *arg1, char *arg2){
+	char *endPath = calloc(strlen(arg1)+17, sizeof(char)); // Stores path of end.txt
+	strcpy(endPath, arg1);
+	strcat(endPath, "/credits/end.txt");
+	FILE *filePTR = fopen(endPath, "r");
+
+	// Check if file exists
+	if (filePTR == NULL){
+		// Couldn't find it so skip
+		fprintf(stderr, "Could not find 'end.txt' file\n");
+	}
+	else {
+		// Copy contents of file
+		char *buffer = calloc(1024, sizeof(char));
+		char *outPath = calloc(strlen(arg2)+32, sizeof(char));
+		strcpy(outPath, arg2);
+		strcat(outPath, "/assets/minecraft/texts/end.txt");
+		FILE *outPTR = fopen(outPath, "w");
+		if (outPTR != NULL){
+			while (fgets(buffer, 1024, filePTR) != NULL){
+				fputs(buffer, outPTR);
+			}
+			fclose(filePTR);
+			fclose(outPTR);
+		}
+		else{
+			fprintf(stderr, "Unable to copy 'end.txt' file\n");
+		}
+
+		// Free up resources
+		free(buffer);
+		free(outPath);
+	}
+
+	free(endPath); // Dealt with end.txt stuff
+}
