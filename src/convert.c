@@ -45,7 +45,8 @@ void startConversion(){
 	parseZip(arg1);
 	genFolders(arg2);
 	arg1 = parseManifest(arg1, arg2);
-	parseTexts(arg1, arg2);
+	parseEndText(arg1, arg2);
+	parseSplashes(arg1, arg2);
 }
 
 void genFolders(char *arg2){

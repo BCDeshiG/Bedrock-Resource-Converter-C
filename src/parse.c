@@ -135,7 +135,7 @@ void parseManAUX(FILE *filePTR, char *arg2){
 		exit(1);
 	}
 	
-	// Generate `pack.mcmeta` file
+	// Generate 'pack.mcmeta' file
 	char *outSTR = calloc(strlen(descSTR)+44, sizeof(char));
 	strcpy(outSTR, "{\"pack\": {\"description\": ");
 	strcat(outSTR, descSTR);
@@ -162,7 +162,7 @@ void parseManAUX(FILE *filePTR, char *arg2){
 	free(outSTR);
 }
 
-void parseTexts(char *arg1, char *arg2){
+void parseEndText(char *arg1, char *arg2){
 	char *endPath = calloc(strlen(arg1)+17, sizeof(char)); // Stores path of end.txt
 	strcpy(endPath, arg1);
 	strcat(endPath, "/credits/end.txt");
@@ -179,6 +179,7 @@ void parseTexts(char *arg1, char *arg2){
 		char *outPath = calloc(strlen(arg2)+32, sizeof(char));
 		strcpy(outPath, arg2);
 		strcat(outPath, "/assets/minecraft/texts/end.txt");
+
 		FILE *outPTR = fopen(outPath, "w");
 		if (outPTR != NULL){
 			while (fgets(buffer, 1024, filePTR) != NULL){
@@ -197,4 +198,69 @@ void parseTexts(char *arg1, char *arg2){
 	}
 
 	free(endPath); // Dealt with end.txt stuff
+}
+
+void parseSplashes(char *arg1, char *arg2){
+	// Store path of splashes.json
+	char *splashPath = calloc(strlen(arg1)+15, sizeof(char));
+	strcpy(splashPath, arg1);
+	strcat(splashPath, "/splashes.json");
+	FILE *filePTR = fopen(splashPath, "r");
+
+	// Check if file exists
+	if (filePTR == NULL){
+		// Couldn't find it so skip
+		fprintf(stderr, "Could not find 'splashes.json' file\n");
+	}
+	else { // Read contents of json file
+		char *buffer = calloc(128, sizeof(char));
+		char *tempSTR = calloc(128, sizeof(char));
+
+		// Copy buffer into temporary string
+		while (fgets(buffer, 128, filePTR) != NULL){
+			tempSTR = realloc(tempSTR, strlen(tempSTR)+strlen(buffer)+1);
+			strcat(tempSTR, buffer);
+		}
+		cJSON *json = cJSON_Parse(tempSTR); // Store json
+		// Free up resources
+		fclose(filePTR);
+		free(buffer);
+		free(tempSTR);
+
+		// Ensure json was parsed properly
+		if (json == NULL){
+			const char *error_ptr = cJSON_GetErrorPtr();
+			if (error_ptr != NULL)
+			{
+				fprintf(stderr, "Error before: %s\n", error_ptr);
+			}
+			fprintf(stderr, "Unable to parse splash texts\n");
+		}
+		else{
+			// Copy splash texts to output file
+			cJSON *splashes = cJSON_GetObjectItemCaseSensitive(json, "splashes");
+			char *outPath = calloc(strlen(arg2)+37, sizeof(char));
+			strcpy(outPath, arg2);
+			strcat(outPath, "/assets/minecraft/texts/splashes.txt");
+
+			FILE *outPTR = fopen(outPath, "w");
+			if (outPTR != NULL){
+				for (int i=0; i<cJSON_GetArraySize(splashes); i++){
+					char *outSTR = cJSON_GetArrayItem(splashes, i)->valuestring;
+					strcat(outSTR, "\n");
+					fputs(outSTR, outPTR);
+				}
+				fclose(outPTR); // Done writing splashes
+			}
+			else{
+				fprintf(stderr, "Unable to copy splash texts\n");
+			}
+
+			// Free up resources
+			cJSON_Delete(json);
+			free(outPath);
+		}
+	}
+
+	free(splashPath); // Dealt with splash texts
 }

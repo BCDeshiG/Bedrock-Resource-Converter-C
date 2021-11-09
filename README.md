@@ -9,7 +9,7 @@
 * Usage: `./br-convert packFolder destinationFolder`
 * Note: WIP, not all entities are converted (see `fixme.txt`)
 
-## Libaries
+## Libraries Used
 
 * [libzip](https://libzip.org/documentation/libzip.html)
 * * Get this from your package manager

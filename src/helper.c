@@ -48,7 +48,7 @@ void dirSPACES(char *string){
 	strcpy(tempSTR, string); // Copy string again
 	token = strtok(tempSTR, sp); // Re-get 1st chunk
 	strcpy(string, token);
-	for(short i=1; i<numTokens; i++){
+	for (short i=1; i<numTokens; i++){
 		token = strtok(NULL, sp); // Get next chunk
 		strcat(string, "\ "); // Add escaped space
 		strcat(string, token); // Add next chunk
