@@ -2,10 +2,10 @@ INCDIR = ../include
 OBJDIR = ./obj
 CFLAGS=-I$(INCDIR) -g -O0
 
-_DEPS = cJSON.h convert.h extractZIP.h helper.h parse.h #fixTextures.h
+_DEPS = cJSON.h convert.h copyTex.h extractZIP.h helper.h parse.h
 DEPS = $(patsubst %,$(INCDIR)/%,$(_DEPS))
 
-_OBJ  = cJSON.o convert.o extractZIP.o helper.o parse.o #fixTextures.o
+_OBJ  = cJSON.o convert.o copyTex.o extractZIP.o helper.o parse.o
 OBJ = $(patsubst %,$(OBJDIR)/%,$(_OBJ))
 
 LIBS = -lzip

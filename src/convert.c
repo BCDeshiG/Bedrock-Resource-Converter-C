@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "convert.h"
+#include "copyTex.h"
 #include "helper.h"
 #include "parse.h"
 
@@ -50,6 +51,8 @@ void startConversion(){
 	arg1 = parseManifest(arg1, arg2);
 	parseEndText(arg1, arg2);
 	parseSplashes(arg1, arg2);
+	copyTextures(arg1, arg2);
+	//copyAnimations(arg2);
 }
 
 void genFolders(char *arg2){
