@@ -29,6 +29,9 @@ int main(int argc, char *argv[]){
 	}
 	// Inputs have been processed now so start converting
 	startConversion();
+	// Finished
+	free(arg1);
+	free(arg2);
 }
 
 char *initArg(char *arg, char msg[]){
@@ -42,8 +45,8 @@ char *initArg(char *arg, char msg[]){
 
 void startConversion(){
 	safe_create_dir(arg2);
-	parseZip(arg1);
 	genFolders(arg2);
+	parseZip(arg1);
 	arg1 = parseManifest(arg1, arg2);
 	parseEndText(arg1, arg2);
 	parseSplashes(arg1, arg2);
@@ -66,5 +69,6 @@ void genFolders(char *arg2){
 		safe_create_dir(tempPath); // Create new folder
 		free(tempPath); // This folder is done, on to next
 	}
+	fclose(filePTR);
 	free(buffer);
 }

@@ -77,7 +77,7 @@ char *parseManifest(char *arg1, char *arg2){
 			closedir(dir); // No longer need to look at whole folder
 
 			// Kinda just assume what we found was a folder
-			manPath = realloc(manPath, argLen+strlen(entry)+15);
+			manPath = realloc(manPath, argLen+strlen(entry)+16);
 			strcpy(manPath, arg1);
 			free(arg1); // Gonna replace this in a sec
 			strcat(manPath, "/");
@@ -136,7 +136,7 @@ void parseManAUX(FILE *filePTR, char *arg2){
 	}
 	
 	// Generate 'pack.mcmeta' file
-	char *outSTR = calloc(strlen(descSTR)+44, sizeof(char));
+	char *outSTR = calloc(strlen(descSTR)+45, sizeof(char));
 	strcpy(outSTR, "{\"pack\": {\"description\": ");
 	strcat(outSTR, descSTR);
 	strcat(outSTR, ",\"pack_format\": 7}}");
@@ -146,7 +146,7 @@ void parseManAUX(FILE *filePTR, char *arg2){
 	free(descSTR);
 	
 	// Write to output file
-	char *outPath = calloc(strlen(arg2)+12, sizeof(char));
+	char *outPath = calloc(strlen(arg2)+13, sizeof(char));
 	strcpy(outPath, arg2);
 	strcat(outPath, "/pack.mcmeta");
 	FILE *outPTR = fopen(outPath, "w");

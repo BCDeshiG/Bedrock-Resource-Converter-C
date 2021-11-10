@@ -30,7 +30,7 @@ void dirSPACES(char *string){
 	unsigned short length = strlen(string);
 
 	// strtok() modifies so make a copy
-	char *tempSTR = calloc(length, sizeof(char));
+	char *tempSTR = calloc(length+1, sizeof(char));
 	strcpy(tempSTR, string);
 
 	token = strtok(tempSTR, sp); // Get 1st chunk
