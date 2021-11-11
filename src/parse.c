@@ -146,10 +146,7 @@ void parseManAUX(FILE *filePTR, char *arg2){
 	free(descSTR);
 	
 	// Write to output file
-	char *outPath = calloc(strlen(arg2)+13, sizeof(char));
-	strcpy(outPath, arg2);
-	strcat(outPath, "/pack.mcmeta");
-	FILE *outPTR = fopen(outPath, "w");
+	FILE *outPTR = getFileARG(arg2, "/pack.mcmeta", "w");
 	if (outPTR == NULL){
 		fprintf(stderr, "Unable to write output file\n");
 		exit(1);
@@ -158,15 +155,11 @@ void parseManAUX(FILE *filePTR, char *arg2){
 	
 	// Free up resources
 	fclose(outPTR);
-	free(outPath);
 	free(outSTR);
 }
 
 void parseEndText(char *arg1, char *arg2){
-	char *endPath = calloc(strlen(arg1)+17, sizeof(char)); // Stores path of end.txt
-	strcpy(endPath, arg1);
-	strcat(endPath, "/credits/end.txt");
-	FILE *filePTR = fopen(endPath, "r");
+	FILE *filePTR = getFileARG(arg1, "/credits/end.txt", "r");
 
 	// Check if file exists
 	if (filePTR == NULL){
@@ -176,11 +169,7 @@ void parseEndText(char *arg1, char *arg2){
 	else {
 		// Copy contents of file
 		char *buffer = calloc(1024, sizeof(char));
-		char *outPath = calloc(strlen(arg2)+32, sizeof(char));
-		strcpy(outPath, arg2);
-		strcat(outPath, "/assets/minecraft/texts/end.txt");
-
-		FILE *outPTR = fopen(outPath, "w");
+		FILE *outPTR = getFileARG(arg2, "/assets/minecraft/texts/end.txt", "w");
 		if (outPTR != NULL){
 			while (fgets(buffer, 1024, filePTR) != NULL){
 				fputs(buffer, outPTR);
@@ -194,18 +183,11 @@ void parseEndText(char *arg1, char *arg2){
 
 		// Free up resources
 		free(buffer);
-		free(outPath);
 	}
-
-	free(endPath); // Dealt with end.txt stuff
 }
 
 void parseSplashes(char *arg1, char *arg2){
-	// Store path of splashes.json
-	char *splashPath = calloc(strlen(arg1)+15, sizeof(char));
-	strcpy(splashPath, arg1);
-	strcat(splashPath, "/splashes.json");
-	FILE *filePTR = fopen(splashPath, "r");
+	FILE *filePTR = getFileARG(arg1, "/splashes.json", "r");
 
 	// Check if file exists
 	if (filePTR == NULL){
@@ -239,11 +221,7 @@ void parseSplashes(char *arg1, char *arg2){
 		else{
 			// Copy splash texts to output file
 			cJSON *splashes = cJSON_GetObjectItemCaseSensitive(json, "splashes");
-			char *outPath = calloc(strlen(arg2)+37, sizeof(char));
-			strcpy(outPath, arg2);
-			strcat(outPath, "/assets/minecraft/texts/splashes.txt");
-
-			FILE *outPTR = fopen(outPath, "w");
+			FILE *outPTR = getFileARG(arg2, "/assets/minecraft/texts/splashes.txt", "w");
 			if (outPTR != NULL){
 				for (int i=0; i<cJSON_GetArraySize(splashes); i++){
 					char *outSTR = cJSON_GetArrayItem(splashes, i)->valuestring;
@@ -258,9 +236,6 @@ void parseSplashes(char *arg1, char *arg2){
 
 			// Free up resources
 			cJSON_Delete(json);
-			free(outPath);
 		}
 	}
-
-	free(splashPath); // Dealt with splash texts
 }

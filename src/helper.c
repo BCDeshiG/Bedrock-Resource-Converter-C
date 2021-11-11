@@ -55,3 +55,13 @@ void dirSPACES(char *string){
 	}
 	free(tempSTR);
 }
+
+FILE *getFileARG(char *arg, char *path, char *mode){
+	unsigned short newLen = strlen(arg)+strlen(path);
+	char *fPATH = calloc(newLen+1, sizeof(char));
+	strcpy(fPATH, arg);
+	strcat(fPATH, path);
+	FILE *fPTR = fopen(fPATH, mode);
+	free(fPATH);
+	return fPTR;
+}
