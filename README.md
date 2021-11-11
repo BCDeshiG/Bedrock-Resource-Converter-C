@@ -15,6 +15,8 @@
 * * Get this from your package manager
 * [cJSON](https://github.com/DaveGamble/cJSON)
 * * Included in source as a header file
+* [stb_image](https://github.com/nothings/stb)
+* * Included in source as headers file
 
 ## Build Instructions (Linux)
 

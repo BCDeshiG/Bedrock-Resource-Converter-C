@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "stb_image/stb_image.h"
+#include "stb_image/stb_image_write.h"
+
 #include "copyTex.h"
 #include "helper.h"
 
@@ -20,10 +23,23 @@ void copyTextures(char *arg1, char *arg2){
 		char *fileExt = strrchr(innPath, '.'); // Check image type
 		if (!strcmp(fileExt, ".tga")){
 			// TODO Convert to png (somehow)
-			fprintf(stderr, "TGA support not yet implemented: %s\n", innPath);
-			free(innPath);
-			free(outPath);
-			continue;
+			int w, h, ch;
+			unsigned char *img = stbi_load(innPath, &w, &h, &ch, 0);
+			if (img == NULL){ // TODO implement missing.txt
+				fprintf(stderr, "Unable to locate file: %s\n", innPath);
+				free(innPath);
+				free(outPath);
+				continue;
+			}
+			else{
+				free(innPath); // File has been opened
+				if (stbi_write_png(outPath, w, h, ch, img, w*ch) == 0){
+					fprintf(stderr, "Unable to write to file: %s\n", outPath);
+				}
+				// Free up resources
+				stbi_image_free(img);
+				free(outPath);
+			}
 		}
 		else{ // PNG file so just copy bytes over
 			FILE *innPTR = fopen(innPath, "rb"); // File to be copied
