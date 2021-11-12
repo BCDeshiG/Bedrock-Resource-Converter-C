@@ -65,3 +65,10 @@ FILE *getFileARG(char *arg, char *path, char *mode){
 	free(fPATH);
 	return fPTR;
 }
+
+char *intToSTR(int i){
+	int tempLen = snprintf(NULL, 0, "%d", i);
+	char* intSTR = malloc(tempLen+1);
+	snprintf(intSTR, tempLen+1, "%d", i);
+	return intSTR;
+}

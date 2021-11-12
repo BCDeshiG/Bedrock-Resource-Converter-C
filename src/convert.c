@@ -54,6 +54,8 @@ void startConversion(){
 	parseSplashes(arg1, arg2);
 	copyTextures(arg1, arg2);
 	//copyAnimations(arg2);
+	splitCompass(arg1, arg2, "watch_atlas.png");
+	splitCompass(arg1, arg2, "compass_atlas.png");
 }
 
 void genFolders(char *arg2){
