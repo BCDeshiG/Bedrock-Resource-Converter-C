@@ -16,7 +16,7 @@
 * [cJSON](https://github.com/DaveGamble/cJSON)
 * * Included in source as a header file
 * [stb_image](https://github.com/nothings/stb)
-* * Included in source as headers file
+* * Included in source as header files
 
 ## Build Instructions (Linux)
 

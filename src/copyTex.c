@@ -9,6 +9,7 @@
 #include "helper.h"
 
 void copyTextures(char *arg1, char *arg2){
+	FILE *missingPTR = fopen("../missing.txt", "w"); // Keep track of missing files
 	FILE *csvPTR = fopen("../textures.csv", "r"); // Table of bedrock/java file names
 	char buffer[160];
 	if (csvPTR == NULL){
@@ -22,11 +23,11 @@ void copyTextures(char *arg1, char *arg2){
 
 		char *fileExt = strrchr(innPath, '.'); // Check image type
 		if (!strcmp(fileExt, ".tga")){
-			// TODO Convert to png (somehow)
 			int w, h, ch;
 			unsigned char *img = stbi_load(innPath, &w, &h, &ch, 0);
-			if (img == NULL){ // TODO implement missing.txt
-				fprintf(stderr, "Unable to locate file: %s\n", innPath);
+			if (img == NULL){
+				//fprintf(stderr, "Unable to locate file: %s\n", innPath);
+				fprintf(missingPTR, "%s\n", innPath); // Note down missing texture
 				free(innPath);
 				free(outPath);
 				continue;
@@ -43,8 +44,9 @@ void copyTextures(char *arg1, char *arg2){
 		}
 		else{ // PNG file so just copy bytes over
 			FILE *innPTR = fopen(innPath, "rb"); // File to be copied
-			if (innPTR == NULL){ // TODO implement missing.txt
-				fprintf(stderr, "Unable to locate file: %s\n", innPath);
+			if (innPTR == NULL){
+				//fprintf(stderr, "Unable to locate file: %s\n", innPath);
+				fprintf(missingPTR, "%s\n", innPath); // Note down missing texture
 				free(innPath);
 				free(outPath);
 				continue;
@@ -65,6 +67,7 @@ void copyTextures(char *arg1, char *arg2){
 	}
 	// Free up resources
 	fclose(csvPTR);
+	fclose(missingPTR);
 }
 
 char *getPathCSV(char *arg, char *buf){
@@ -89,9 +92,3 @@ void copyPNG(FILE *innPTR, FILE *outPTR){
 	fclose(innPTR);
 	fclose(outPTR);
 }
-
-/*
-void copyAnimations(char *arg2){
-	puts("yes");
-}
-*/
