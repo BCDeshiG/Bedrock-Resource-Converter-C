@@ -4,9 +4,10 @@
 
 #include "convert.h"
 #include "copyTex.h"
+#include "fixTextures.h"
 #include "helper.h"
 #include "parse.h"
-#include "fixTextures.h"
+#include "split.h"
 
 int main(int argc, char *argv[]){
 	if (argc == 1){ // No arguments supplied
@@ -55,6 +56,7 @@ void startConversion(){
 	copyTextures(arg1, arg2);
 	splitCompass(arg1, arg2, "watch_atlas.png");
 	splitCompass(arg1, arg2, "compass_atlas.png");
+	splitPaintings(arg1, arg2);
 }
 
 void genFolders(char *arg2){

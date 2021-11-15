@@ -2,11 +2,6 @@
 
 #ifndef HEADER_INCLUDE_FIX
 #define HEADER_INCLUDE_FIX
-void splitCompass(char *arg1, char *arg2, char *atlas); // Split compass/clock textures
-void splitPaintings(char *arg1, char *arg2); // Split painting into separate textures
-void splitPaintingsAux(unsigned char *img, char *arr[],
-		short qtop, short qw, short qh, char *arg2); // Helper function
-
 void fixBeds(char *arg1, char *arg2);
 void fixChests(char *arg1, char *arg2, char *chest);
 void fixZombies(char *arg1, char *arg2, char *zombie);
