@@ -111,16 +111,15 @@ void splitPaintings(char *arg1, char *arg2){
 	free(innPath); // Atlas loaded
 	const int q = floor(h/16); // Quantum cell size
 
-	// Main paintings
+	// Crop paintings
 	paintingAux1(kz, x16P,  7, q, 0,  1, 1, ch, outPath);
-	paintingAux1(kz, xWide, 5, q, 2,  2, 1, ch, outPath);
-	paintingAux1(kz, xTall, 2, q, 4,  1, 2, ch, outPath);
-	paintingAux1(kz, x32P,  6, q, 8,  2, 2, ch, outPath);
-	paintingAux1(kz, x64P,  3, q, 12, 4, 4, ch, outPath);
-
-	paintingAux2(kz, "fighters.png",    q, 6, 0,  4, 2, ch, outPath);
-	paintingAux2(kz, "skeleton.png",    q, 4, 11, 4, 3, ch, outPath);
-	paintingAux2(kz, "donkey_kong.png", q, 7, 11, 4, 3, ch, outPath);
+	paintingAux1(kz, xWide, 5, q, 2*q,  2, 1, ch, outPath);
+	paintingAux1(kz, xTall, 2, q, 4*q,  1, 2, ch, outPath);
+	paintingAux1(kz, x32P,  6, q, 8*q,  2, 2, ch, outPath);
+	paintingAux1(kz, x64P,  3, q, 12*q, 4, 4, ch, outPath);
+	paintingAux2(kz, "fighters.png",    q, 6*q, 0, 4, 2, ch, outPath);
+	paintingAux2(kz, "skeleton.png",    q, 4*q, 12*q, 4, 3, ch, outPath);
+	paintingAux2(kz, "donkey_kong.png", q, 7*q, 12*q, 4, 3, ch, outPath);
 
 	stbi_image_free(kz);
 	free(outPath);
@@ -130,8 +129,8 @@ void paintingAux1(unsigned char *img, char *arr[], const int arrLen,
 	const int q, int qTop, int qw, int qh, int ch, char *outPath)
 {
 	for (int i=0; i<arrLen; i++){
-		int qStat[4] = {qTop, i, qw, qh}; // (Quantum) top left width height
-		unsigned char *outIMG = cropPainting(img, q, qStat, ch); // Store cropped image
+		int qStat[4] = {qTop, i*q*qw, qw, qh}; // (Quantum) top left width height
+		unsigned char *outIMG = crop(img, q, qStat, 16*q, ch); // Store cropped image
 		char *tempSTR = calloc(strlen(outPath)+20, sizeof(char)); // Store path
 		strcpy(tempSTR, outPath);
 		strcat(tempSTR, arr[i]);
@@ -148,7 +147,7 @@ void paintingAux2(unsigned char *img, char *name, const int q,
 	int qTop, int qLeft, int qw, int qh, int ch, char *outPath)
 {
 	int qStat[] = {qTop, qLeft, qw, qh};
-	unsigned char *outIMG = cropPainting(img, q, qStat, ch); // Store cropped image
+	unsigned char *outIMG = crop(img, q, qStat, 16*q, ch); // Store cropped image
 	int newLen = strlen(outPath)+strlen(name);
 	char *tempSTR = calloc(newLen+1, sizeof(char)); // Store path of output image
 	strcpy(tempSTR, outPath);
@@ -159,29 +158,4 @@ void paintingAux2(unsigned char *img, char *name, const int q,
 	// Free up resources
 	free(outIMG);
 	free(tempSTR);
-}
-
-char *cropPainting(unsigned char *img, int q, int qStat[4], int ch){
-	// Number of cells * size of cell
-	const int newW = qStat[2]*q;
-	const int newH = qStat[3]*q;
-
-	const int imgW = q*16*ch; // Width of big painting in bytes
-	const int regionSize = newW*newH*ch; // Size of individual painting in bytes
-	const int rowSize = newW*ch; // Width of painting in bytes
-	int count = 0; // Number of bytes read
-	int pos = 0; // Position along row
-	int shift = (qStat[0]*q*imgW)+(qStat[1]*newW*ch);
-
-	unsigned char *outIMG = calloc(regionSize, sizeof(unsigned char)); // Output image
-	while (count < regionSize){
-		while (pos < rowSize){ // Read a row of pixels
-			outIMG[count] = img[pos+shift];
-			pos++;
-			count++;
-		}
-		shift += q*16*ch; // Shift over to next row
-		pos = 0;
-	}
-	return outIMG;
 }

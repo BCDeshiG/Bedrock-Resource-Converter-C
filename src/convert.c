@@ -57,6 +57,8 @@ void startConversion(){
 	splitCompass(arg1, arg2, "watch_atlas.png");
 	splitCompass(arg1, arg2, "compass_atlas.png");
 	splitPaintings(arg1, arg2);
+	fixes(arg1, arg2);
+	wrapUp();
 }
 
 void genFolders(char *arg2){
@@ -78,4 +80,15 @@ void genFolders(char *arg2){
 	}
 	fclose(filePTR);
 	free(buffer);
+}
+
+void wrapUp(){
+	puts("\nConversion Complete");
+	puts("Please see 'fixme.txt' for textures that need attention");
+	FILE *checkPTR = fopen("../missing.txt", "r");
+	if (checkPTR != NULL){ // Check if missing.txt exists
+		fclose(checkPTR); // No need to read it
+		puts("\nSome files were missing from your texture pack and were not included.");
+		puts("Please see the generated 'missing.txt' file for details.");
+	}
 }

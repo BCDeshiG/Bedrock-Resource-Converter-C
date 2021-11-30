@@ -9,4 +9,5 @@ char *arg2; // Output - Java resource pack path
 char *initArg(char *arg, char msg[]); // Interactive mode
 void startConversion(void); // Runs conversion procedures
 void genFolders(char *arg2); // Creates necessary folders
+void wrapUp(void); // Ending messages
 #endif

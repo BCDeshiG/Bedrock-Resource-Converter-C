@@ -10,6 +10,4 @@ void paintingAux1(unsigned char *img, char *arr[], const int arrLen,
 // Atlas, Name of painting, Unit Size, Top, Left, Width, Height, Channels, Output path
 void paintingAux2(unsigned char *img, char *name, const int q,
 	int qTop, int qLeft, int qw, int qh, int ch, char *outPath);
-// qStat[] is Top, Left, Width, Height
-char *cropPainting(unsigned char *img, int q, int qStat[4], int ch);
 #endif
