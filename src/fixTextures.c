@@ -19,7 +19,7 @@ void fixes(char *arg1, char *arg2){
 	fixBeds(arg1, arg2);
 }
 
-void fixBeds(char *arg1, char *arg2){ // FIXME Bed Feet
+void fixBeds(char *arg1, char *arg2){
 	// Path of input folder
 	char *innFolder = calloc(strlen(arg1)+22, sizeof(char));
 	strcpy(innFolder, arg1);
@@ -53,6 +53,7 @@ void fixBeds(char *arg1, char *arg2){ // FIXME Bed Feet
 		closedir(dir); // Finished reading
 	}
 
+	// Iterate through textures
 	for (int i=0; i<count; i++){
 		// Store path of input texture
 		unsigned short newLen = strlen(innFolder)+strlen(bedNames[i]);
@@ -70,7 +71,8 @@ void fixBeds(char *arg1, char *arg2){ // FIXME Bed Feet
 			continue;
 		}
 
-		char *tempSTR = calloc(strlen(outFolder)+15, sizeof(char)); // Store path
+		// Store output path
+		char *tempSTR = calloc(strlen(outFolder)+15, sizeof(char));
 		strcpy(tempSTR, outFolder);
 		// Silver bed becomes Light Gray bed
 		if (!strncmp(bedNames[i], "silver", 6)){
@@ -83,17 +85,12 @@ void fixBeds(char *arg1, char *arg2){ // FIXME Bed Feet
 		}
 		strcat(tempSTR, bedNames[i]);
 
+		// Actually fix texture
 		const int q = floor(h/64); // Resize scale
-		int qStat[4] = {0, 16, 16, 16}; // (Quantum) top left width height
-		unsigned char *outIMG = crop(img, q, qStat, w, ch); // Store cropped image
-		if (stbi_write_png(tempSTR, qStat[2], qStat[3], ch, outIMG, qStat[2]*ch) == 0){
-			fprintf(stderr, "Unable to write to file\n");
-		}
-		// Free up resources
-		free(outIMG);
-		free(tempSTR);
+		fixBedsAux(img, q, w, h, ch, tempSTR);
 
 		// Free up resources
+		free(tempSTR);
 		stbi_image_free(img);
 		free(bedNames[i]);
 		free(innPath);
@@ -102,4 +99,28 @@ void fixBeds(char *arg1, char *arg2){ // FIXME Bed Feet
 	// Free up resources
 	free(innFolder);
 	free(outFolder);
+}
+
+// TODO Bed Feet
+void fixBedsAux(unsigned char *bed, const int q, int w, int h, int ch, char *outPath){
+	int qStat[4] = {22, 0, 44, 28};
+	unsigned char *tempIMG = crop(bed, q, qStat, w, ch); // Store cropped image
+	deleteRegion(bed, q, qStat, w, ch); // Erase section of image
+	qStat[0] += 6; // Shift down 6 pixels
+	paste(tempIMG, bed, q, qStat, w, ch); // Paste cropped region back onto image
+	// Clear intermediate for next step
+	free(tempIMG);
+
+	qStat[0] = 0, qStat[1] = 22, qStat[2] = 16, qStat[3] = 6; // New params
+	tempIMG = crop(bed, q, qStat, w, ch); // Store cropped image
+	deleteRegion(bed, q, qStat, w, ch); // Erase section of image
+	qStat[0] += 22; // Shift down into gap
+	paste(tempIMG, bed, q, qStat, w, ch); // Paste cropped region back onto image
+	// Clear intermediate
+	free(tempIMG);
+
+	// Save result
+	if (stbi_write_png(outPath, w, h, ch, bed, w*ch) == 0){
+		fprintf(stderr, "Could not save to '%s'\n", outPath);
+	}
 }

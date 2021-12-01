@@ -113,13 +113,13 @@ void splitPaintings(char *arg1, char *arg2){
 
 	// Crop paintings
 	paintingAux1(kz, x16P,  7, q, 0,  1, 1, ch, outPath);
-	paintingAux1(kz, xWide, 5, q, 2*q,  2, 1, ch, outPath);
-	paintingAux1(kz, xTall, 2, q, 4*q,  1, 2, ch, outPath);
-	paintingAux1(kz, x32P,  6, q, 8*q,  2, 2, ch, outPath);
-	paintingAux1(kz, x64P,  3, q, 12*q, 4, 4, ch, outPath);
-	paintingAux2(kz, "fighters.png",    q, 6*q, 0, 4, 2, ch, outPath);
-	paintingAux2(kz, "skeleton.png",    q, 4*q, 12*q, 4, 3, ch, outPath);
-	paintingAux2(kz, "donkey_kong.png", q, 7*q, 12*q, 4, 3, ch, outPath);
+	paintingAux1(kz, xWide, 5, q, 2,  2, 1, ch, outPath);
+	paintingAux1(kz, xTall, 2, q, 4,  1, 2, ch, outPath);
+	paintingAux1(kz, x32P,  6, q, 8,  2, 2, ch, outPath);
+	paintingAux1(kz, x64P,  3, q, 12, 4, 4, ch, outPath);
+	paintingAux2(kz, "fighters.png",    q, 6, 0,  4, 2, ch, outPath);
+	paintingAux2(kz, "skeleton.png",    q, 4, 12, 4, 3, ch, outPath);
+	paintingAux2(kz, "donkey_kong.png", q, 7, 12, 4, 3, ch, outPath);
 
 	stbi_image_free(kz);
 	free(outPath);
@@ -129,7 +129,7 @@ void paintingAux1(unsigned char *img, char *arr[], const int arrLen,
 	const int q, int qTop, int qw, int qh, int ch, char *outPath)
 {
 	for (int i=0; i<arrLen; i++){
-		int qStat[4] = {qTop, i*q*qw, qw, qh}; // (Quantum) top left width height
+		int qStat[4] = {qTop, i*qw, qw, qh}; // (Quantum) top left width height
 		unsigned char *outIMG = crop(img, q, qStat, 16*q, ch); // Store cropped image
 		char *tempSTR = calloc(strlen(outPath)+20, sizeof(char)); // Store path
 		strcpy(tempSTR, outPath);

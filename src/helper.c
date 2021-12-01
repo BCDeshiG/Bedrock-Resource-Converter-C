@@ -73,7 +73,15 @@ char *intToSTR(int i){
 	return intSTR;
 }
 
-char *crop(unsigned char *img, int q, int qStat[4], int w, int ch){
+// DEBUG LOOP
+void debugIMG(unsigned char *outIMG){
+	for (int j=0; j<strlen(outIMG)*4; j+=4){
+		printf("RGBA: %i %i %i %i\n",
+			outIMG[j], outIMG[j+1], outIMG[j+2], outIMG[j+3]);
+	}
+}
+
+char *crop(unsigned char *img, const int q, int qStat[4], int w, int ch){
 	// Region width and height (scaled)
 	const int newW = qStat[2]*q;
 	const int newH = qStat[3]*q;
@@ -83,7 +91,7 @@ char *crop(unsigned char *img, int q, int qStat[4], int w, int ch){
 	const int newRowSize = newW*ch; // Width of region in bytes
 	int count = 0; // Number of bytes read
 	int pos = 0; // Position along row
-	int shift = (qStat[0]*imgW)+(qStat[1]*ch); // qTop rows down, qLeft pixels across
+	int shift = (qStat[0]*q*imgW)+(qStat[1]*q*ch); // qTop rows down, qLeft pixels across
 
 	unsigned char *outIMG = calloc(regionSize, sizeof(unsigned char)); // Output image
 	while (count < regionSize){
@@ -98,10 +106,50 @@ char *crop(unsigned char *img, int q, int qStat[4], int w, int ch){
 	return outIMG;
 }
 
-// DEBUG LOOP
-void debugIMG(unsigned char *outIMG){
-	for (int j=0; j<strlen(outIMG)*4; j+=4){
-		printf("RGBA: %i %i %i %i\n",
-			outIMG[j], outIMG[j+1], outIMG[j+2], outIMG[j+3]);
+void paste(unsigned char *region, unsigned char *destIMG,
+	const int q, int qStat[4], int w, int ch)
+{
+	// Region width and height (scaled)
+	const int newW = qStat[2]*q;
+	const int newH = qStat[3]*q;
+
+	const int imgW = w*ch; // Width of source texture in bytes
+	const int regionSize = newW*newH*ch; // Size of region in bytes
+	const int newRowSize = newW*ch; // Width of region in bytes
+	int count = 0; // Number of bytes read
+	int pos = 0; // Position along row
+	int shift = (qStat[0]*q*imgW)+(qStat[1]*q*ch); // qTop rows down, qLeft pixels across
+
+	while (count < regionSize){
+		while (pos < newRowSize){ // Read a row of pixels
+			destIMG[pos+shift] = region[count];
+			pos++;
+			count++;
+		}
+		shift += imgW; // Shift over to next row
+		pos = 0;
+	}
+}
+
+void deleteRegion(unsigned char *img, const int q, int qStat[4], int w, int ch){
+	// Region width and height (scaled)
+	const int newW = qStat[2]*q;
+	const int newH = qStat[3]*q;
+
+	const int imgW = w*ch; // Width of source texture in bytes
+	const int regionSize = newW*newH*ch; // Size of region in bytes
+	const int newRowSize = newW*ch; // Width of region in bytes
+	int count = 0; // Number of bytes read
+	int pos = 0; // Position along row
+	int shift = (qStat[0]*q*imgW)+(qStat[1]*q*ch); // qTop rows down, qLeft pixels across
+
+	while (count < regionSize){
+		while (pos < newRowSize){ // Read a row of pixels
+			img[pos+shift] = 0;
+			pos++;
+			count++;
+		}
+		shift += imgW; // Shift over to next row
+		pos = 0;
 	}
 }
