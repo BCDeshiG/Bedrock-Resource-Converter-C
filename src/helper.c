@@ -106,7 +106,7 @@ char *crop(unsigned char *img, const int q, int qStat[4], int w, int ch){
 	return outIMG;
 }
 
-void paste(unsigned char *region, unsigned char *destIMG,
+void pasteRegion(unsigned char *region, unsigned char *destIMG,
 	const int q, int qStat[4], int w, int ch)
 {
 	// Region width and height (scaled)
@@ -122,30 +122,8 @@ void paste(unsigned char *region, unsigned char *destIMG,
 
 	while (count < regionSize){
 		while (pos < newRowSize){ // Read a row of pixels
-			destIMG[pos+shift] = region[count];
-			pos++;
-			count++;
-		}
-		shift += imgW; // Shift over to next row
-		pos = 0;
-	}
-}
-
-void deleteRegion(unsigned char *img, const int q, int qStat[4], int w, int ch){
-	// Region width and height (scaled)
-	const int newW = qStat[2]*q;
-	const int newH = qStat[3]*q;
-
-	const int imgW = w*ch; // Width of source texture in bytes
-	const int regionSize = newW*newH*ch; // Size of region in bytes
-	const int newRowSize = newW*ch; // Width of region in bytes
-	int count = 0; // Number of bytes read
-	int pos = 0; // Position along row
-	int shift = (qStat[0]*q*imgW)+(qStat[1]*q*ch); // qTop rows down, qLeft pixels across
-
-	while (count < regionSize){
-		while (pos < newRowSize){ // Read a row of pixels
-			img[pos+shift] = 0;
+			// Fill area with 0 if blank region, otherwise copy
+			destIMG[pos+shift] = (region == NULL) ? 0 : region[count];
 			pos++;
 			count++;
 		}

@@ -105,17 +105,17 @@ void fixBeds(char *arg1, char *arg2){
 void fixBedsAux(unsigned char *bed, const int q, int w, int h, int ch, char *outPath){
 	int qStat[4] = {22, 0, 44, 28};
 	unsigned char *tempIMG = crop(bed, q, qStat, w, ch); // Store cropped image
-	deleteRegion(bed, q, qStat, w, ch); // Erase section of image
+	pasteRegion(NULL, bed, q, qStat, w, ch); // Erase section of image
 	qStat[0] += 6; // Shift down 6 pixels
-	paste(tempIMG, bed, q, qStat, w, ch); // Paste cropped region back onto image
+	pasteRegion(tempIMG, bed, q, qStat, w, ch); // Paste cropped region back onto image
 	// Clear intermediate for next step
 	free(tempIMG);
 
 	qStat[0] = 0, qStat[1] = 22, qStat[2] = 16, qStat[3] = 6; // New params
 	tempIMG = crop(bed, q, qStat, w, ch); // Store cropped image
-	deleteRegion(bed, q, qStat, w, ch); // Erase section of image
+	pasteRegion(NULL, bed, q, qStat, w, ch); // Erase section of image
 	qStat[0] += 22; // Shift down into gap
-	paste(tempIMG, bed, q, qStat, w, ch); // Paste cropped region back onto image
+	pasteRegion(tempIMG, bed, q, qStat, w, ch); // Paste cropped region back onto image
 	// Clear intermediate
 	free(tempIMG);
 

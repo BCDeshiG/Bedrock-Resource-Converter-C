@@ -10,9 +10,7 @@ char *intToSTR(int i); // Convert int to string
 // qStat[] is Top, Left, Width, Height (scaled)
 char *crop(unsigned char *img, const int q, int qStat[4], int w, int ch);
 void debugIMG(unsigned char *outIMG); // Prints RGBA values of each pixel
-// Paste a region onto an image
-void paste(unsigned char *region, unsigned char *destIMG,
+// Paste a region onto an image (deletes area if region is NULL)
+void pasteRegion(unsigned char *region, unsigned char *destIMG,
 	const int q, int qStat[4], int w, int ch);
-// Remove part of an image
-void deleteRegion(unsigned char *img, const int q, int qStat[4], int w, int ch);
 #endif
