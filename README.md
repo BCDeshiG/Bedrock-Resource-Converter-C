@@ -2,7 +2,6 @@
 
 * Converts Minecraft Bedrock Resource Packs to Java
 * Ported to C as a learning project
-* * Nowhere near finished lol
 * * Probably won't be updated much as a result
 * [Original project link here](https://github.com/BCDeshiG/Bedrock-Resource-Converter-PY)
 

@@ -5,9 +5,10 @@
 #include <sys/stat.h>
 
 #include "helper.h"
+#include "stb_image/stb_image.h"
+#include "stb_image/stb_image_write.h"
 
-void safe_create_dir(const char *dir)
-{
+void safe_create_dir(const char *dir){
     if (mkdir(dir, 0755) < 0) {
         if (errno != EEXIST) {
             perror(dir);
@@ -64,6 +65,16 @@ FILE *getFileARG(char *arg, char *path, char *mode){
 	FILE *fPTR = fopen(fPATH, mode);
 	free(fPATH);
 	return fPTR;
+}
+
+char *getImageARG(char *arg, char *path, int *w, int *h, int *ch){
+	unsigned short newLen = strlen(arg)+strlen(path);
+	char *fPATH = calloc(newLen+1, sizeof(char));
+	strcpy(fPATH, arg);
+	strcat(fPATH, path);
+	unsigned char *img = stbi_load(fPATH, w, h, ch, 0);
+	free(fPATH);
+	return img;
 }
 
 char *intToSTR(int i){

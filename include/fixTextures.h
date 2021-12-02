@@ -15,6 +15,10 @@ void fixAzalea(char *arg1, char *arg2, char *bush);
 
 void fixes(char *arg1, char *arg2); // Calls the other methods
 
-// Helper method to fix bed texture
+// Helper methods
 void fixBedsAux(unsigned char *bed, const int q, int w, int h, int ch, char *outPath);
+void chestAuxLeft(unsigned char *img, char *chestType, char *outPath,
+	const int q, int w, int h, int ch);
+void chestAuxRight(unsigned char *img, char *chestType, char *outPath,
+	const int q, int w, int h, int ch);
 #endif

@@ -66,7 +66,8 @@ char *parseManifest(char *arg1, char *arg2){
 		DIR *dir = opendir(arg1); // Not in pack root folder so start searching
 		char *entry = calloc(128, sizeof(char)); // Store name of sub-directory
 		if (dir == NULL){
-			fprintf(stderr, "Unable to locate manifest file\n");
+			free(manPath); // Failed to load so not needed
+			free(entry); // Failed to load so not needed
 			exit(1);
 		}
 		else{
@@ -92,7 +93,8 @@ char *parseManifest(char *arg1, char *arg2){
 			// Check if manifest in 'folder'
 			filePTR = fopen(manPath, "r"); 
 			if(filePTR == NULL){ // Weird folder structure?
-				fprintf(stderr, "Unable to locate manifest file\n");
+				free(manPath); // Failed to load so not needed
+				free(rootPath); // Failed to load so not needed
 				exit(1);
 			}
 		}

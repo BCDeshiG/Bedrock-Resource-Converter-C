@@ -14,6 +14,8 @@ void copyTextures(char *arg1, char *arg2){
 	char buffer[160];
 	if (csvPTR == NULL){
 		fprintf(stderr, "Unable to grab texture CSV file\n");
+		free(arg1);
+		free(arg2);
 		exit(1);
 	}
 	while (fgets(buffer, sizeof(buffer), csvPTR) != NULL){

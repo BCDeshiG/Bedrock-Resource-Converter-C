@@ -72,7 +72,6 @@ void splitCompass(char *arg1, char *arg2, char *atlas){
 
 void splitPaintings(char *arg1, char *arg2){
 	// Path of big painting
-	// 	char *innPath = getFileARG(arg1, "textures/painting/kz.png");
 	char kzPath[] = "/textures/painting/kz.png";
 	unsigned short newLen = strlen(arg1)+strlen(kzPath);
 	char *innPath = calloc(newLen+1, sizeof(char));
