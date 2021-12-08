@@ -240,44 +240,74 @@ void chestAuxRight(unsigned char *img, char *chestType, char *outPath,
 {
 	int newW = floor(w/2);
 	unsigned char *outIMG = calloc(newW*h*ch, sizeof(char)); // Store output image
-	int qStat[4] = {0, 0, 29, 43}; // Crop parameters
-	unsigned char *tempIMG = crop(img, q, qStat, w, ch); // Store cropped region
+	int qStat[4] = {0, 0, 6, 5}; // Crop parameters
+	unsigned char *tempIMG = crop(img, q, qStat, w, ch); // Chest handle
 	pasteRegion(tempIMG, outIMG, q, qStat, newW, ch); // Paste cropped region onto image
 	free(tempIMG); // Ready for next step
 
 	qStat[1] = 14, qStat[2] = 15, qStat[3] = 14; // New params
-	tempIMG = crop(img, q, qStat, w, ch); // Store cropped region
+	tempIMG = crop(img, q, qStat, w, ch); // Chest lid top
 	qStat[1] = 29; // Shift region right
 	pasteRegion(tempIMG, outIMG, q, qStat, newW, ch); // Paste cropped region onto image
 	free(tempIMG); // Ready for next step
 
-	qStat[0] = 19, qStat[1] = 14, qStat[3] = 14; // New params
-	tempIMG = crop(img, q, qStat, w, ch); // Store cropped region
-	qStat[1] = 29; // Shift region right
-	pasteRegion(tempIMG, outIMG, q, qStat, newW, ch); // Paste cropped region onto image
-	free(tempIMG); // Ready for next step
-
-	qStat[0] = 0, qStat[1] = 44, qStat[2] = 15, qStat[3] = 14; // New params
-	tempIMG = crop(img, q, qStat, w, ch); // Store cropped region
+	qStat[1] = 44; // New params
+	tempIMG = crop(img, q, qStat, w, ch); // Chest lid inside
 	qStat[1] = 14; // Shift region left
+	pasteRegion(tempIMG, outIMG, q, qStat, newW, ch); // Paste cropped region onto image
+	free(tempIMG); // Ready for next step
+
+	qStat[0] = 14, qStat[1] = 0, qStat[2] = 14, qStat[3] = 5; // New params
+	tempIMG = crop(img, q, qStat, w, ch); // Chest lid side
+	rotate(tempIMG, q, qStat[2], qStat[3], ch); // Rotate 180 degrees
+	pasteRegion(tempIMG, outIMG, q, qStat, newW, ch); // Paste cropped region onto image
+	free(tempIMG); // Ready for next step
+
+	qStat[1] = 14, qStat[2] = 15; // New params
+	tempIMG = crop(img, q, qStat, w, ch); // Chest lid front
+	rotate(tempIMG, q, qStat[2], qStat[3], ch); // Rotate 180 degrees
+	qStat[1] = 43; // Shift region right
+	pasteRegion(tempIMG, outIMG, q, qStat, newW, ch); // Paste cropped region onto image
+	free(tempIMG); // Ready for next step
+
+	qStat[1] = 73; // New params
+	tempIMG = crop(img, q, qStat, w, ch); // Chest lid back
+	rotate(tempIMG, q, qStat[2], qStat[3], ch); // Rotate 180 degrees
+	qStat[1] = 14; // Shift region left
+	pasteRegion(tempIMG, outIMG, q, qStat, newW, ch); // Paste cropped region onto image
+	free(tempIMG); // Ready for final step
+
+	qStat[0] = 19, qStat[1] = 14, qStat[2] = 15, qStat[3] = 14; // New params
+	tempIMG = crop(img, q, qStat, w, ch); // Chest innards
+	qStat[1] = 29; // Shift region right
 	pasteRegion(tempIMG, outIMG, q, qStat, newW, ch); // Paste cropped region onto image
 	free(tempIMG); // Ready for next step
 
 	qStat[0] = 19, qStat[1] = 44; // New params
-	tempIMG = crop(img, q, qStat, w, ch); // Store cropped region
+	tempIMG = crop(img, q, qStat, w, ch); // Chest base
 	qStat[1] = 14; // Shift region left
 	pasteRegion(tempIMG, outIMG, q, qStat, newW, ch); // Paste cropped region onto image
 	free(tempIMG); // Ready for next step
 
-	qStat[0] = 14, qStat[1] = 73, qStat[2] = 15, qStat[3] = 5; // New params
-	tempIMG = crop(img, q, qStat, w, ch); // Store cropped region
-	qStat[1] = 43; // Shift region left
+	// FIXME Possibly wrong bottom (flip other one instead)
+
+	qStat[0] = 33, qStat[1] = 0, qStat[2] = 14, qStat[3] = 10; // New params
+	tempIMG = crop(img, q, qStat, w, ch); // Chest bottom side
+	rotate(tempIMG, q, qStat[2], qStat[3], ch); // Rotate 180 degrees
+	pasteRegion(tempIMG, outIMG, q, qStat, newW, ch); // Paste cropped region onto image
+	free(tempIMG); // Ready for next step
+
+	qStat[1] = 14, qStat[2] = 15; // New params
+	tempIMG = crop(img, q, qStat, w, ch); // Chest bottom front
+	rotate(tempIMG, q, qStat[2], qStat[3], ch); // Rotate 180 degrees
+	qStat[1] = 43; // Shift region right
 	pasteRegion(tempIMG, outIMG, q, qStat, newW, ch); // Paste cropped region onto image
 	free(tempIMG); // Ready for final step
 
-	qStat[0] = 33, qStat[1] = 73, qStat[3] = 10; // New params
-	tempIMG = crop(img, q, qStat, w, ch); // Store cropped region
-	qStat[1] = 43; // Shift region left
+	qStat[1] = 73; // New params
+	tempIMG = crop(img, q, qStat, w, ch); // Chest bottom back
+	rotate(tempIMG, q, qStat[2], qStat[3], ch); // Rotate 180 degrees
+	qStat[1] = 14; // Shift region left
 	pasteRegion(tempIMG, outIMG, q, qStat, newW, ch); // Paste cropped region onto image
 	free(tempIMG); // Procedure complete so no longer needed
 
