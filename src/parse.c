@@ -141,7 +141,7 @@ void parseManAUX(FILE *filePTR, char *arg2){
 	char *outSTR = calloc(strlen(descSTR)+45, sizeof(char));
 	strcpy(outSTR, "{\"pack\": {\"description\": ");
 	strcat(outSTR, descSTR);
-	strcat(outSTR, ",\"pack_format\": 7}}");
+	strcat(outSTR, ",\"pack_format\": 8}}");
 	
 	// Free up resources
 	cJSON_Delete(json);

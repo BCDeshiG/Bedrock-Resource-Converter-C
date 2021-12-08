@@ -3,4 +3,5 @@ missing.txt
 *.mcpack
 src/obj/*.o
 src/br-convert
+src/packs
 *.py
