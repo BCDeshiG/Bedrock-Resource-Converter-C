@@ -134,10 +134,10 @@ void pasteRegion(unsigned char *region, unsigned char *destIMG,
 	}
 }
 
-void rotate(unsigned char *img, int w, int h, int ch)
+void rotate(unsigned char *img, const int q, int w, int h, int ch)
 {
-	const int imgW = w*ch; // Width of source texture in bytes
-	const int imgSize = w*h*ch; // Size of region in bytes
+	const int imgW = q*w*ch; // Width of source texture in bytes
+	const int imgSize = q*q*w*h*ch; // Size of region in bytes
 	int count = 0; // Number of bytes read
 
 	// Store copy of original

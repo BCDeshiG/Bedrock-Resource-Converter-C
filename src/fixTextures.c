@@ -9,7 +9,7 @@
 
 #define STBI_ONLY_PNG
 #define STBI_ONLY_TGA
-#define STBI_MAX_DIMENSIONS (1<<14) // Max texture size of 16k (way overkill)
+#define STBI_MAX_DIMENSIONS (1<<13) // Max texture size of 8k (way overkill)
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image/stb_image.h"
 #define STB_IMAGE_WRITE_IMPLEMENTATION
@@ -183,14 +183,14 @@ void chestAuxLeft(unsigned char *img, char *chestType, char *outPath,
 
 	qStat[0] = 14, qStat[1] = 29, qStat[2] = 44, qStat[3] = 5; // New params
 	tempIMG = crop(img, q, qStat, w, ch); // Store cropped region
-	rotate(tempIMG, qStat[2], qStat[3], ch); // Rotate 180 degrees
+	rotate(tempIMG, q, qStat[2], qStat[3], ch); // Rotate 180 degrees
 	qStat[1] = 14; // Shift region left
 	pasteRegion(tempIMG, outIMG, q, qStat, newW, ch); // Paste cropped region onto image
 	free(tempIMG); // Ready for next step
 
 	qStat[0] = 33, qStat[1] = 29, qStat[3] = 10; // New params
 	tempIMG = crop(img, q, qStat, w, ch); // Store cropped region
-	rotate(tempIMG, qStat[2], qStat[3], ch); // Rotate 180 degrees
+	rotate(tempIMG, q, qStat[2], qStat[3], ch); // Rotate 180 degrees
 	qStat[1] = 14; // Shift region left
 	pasteRegion(tempIMG, outIMG, q, qStat, newW, ch); // Paste cropped region onto image
 	free(tempIMG); // Ready for next step
