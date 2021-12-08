@@ -6,7 +6,6 @@
 
 #include "helper.h"
 #include "stb_image/stb_image.h"
-#include "stb_image/stb_image_write.h"
 
 void safe_create_dir(const char *dir){
     if (mkdir(dir, 0755) < 0) {
@@ -84,14 +83,6 @@ char *intToSTR(int i){
 	return intSTR;
 }
 
-// DEBUG LOOP
-void debugIMG(unsigned char *outIMG){
-	for (int j=0; j<strlen(outIMG)*4; j+=4){
-		printf("RGBA: %i %i %i %i\n",
-			outIMG[j], outIMG[j+1], outIMG[j+2], outIMG[j+3]);
-	}
-}
-
 char *crop(unsigned char *img, const int q, int qStat[4], int w, int ch){
 	// Region width and height (scaled)
 	const int newW = qStat[2]*q;
@@ -141,4 +132,26 @@ void pasteRegion(unsigned char *region, unsigned char *destIMG,
 		shift += imgW; // Shift over to next row
 		pos = 0;
 	}
+}
+
+void rotate(unsigned char *img, int w, int h, int ch)
+{
+	const int imgW = w*ch; // Width of source texture in bytes
+	const int imgSize = w*h*ch; // Size of region in bytes
+	int count = 0; // Number of bytes read
+
+	// Store copy of original
+	unsigned char *tempIMG = calloc(imgSize, sizeof(char));
+	memcpy(tempIMG, img, imgSize);
+
+	// Basically read the image backwards keeping in mind channels
+	while (count < imgSize){
+		for (short i=0; i<ch; i++){
+			int next = imgSize-count-ch+i;
+			img[count+i] = tempIMG[next];
+		}
+		count+=ch;
+	}
+	// Destroy old copy
+	free(tempIMG);
 }
