@@ -20,6 +20,9 @@ void fixes(char *arg1, char *arg2){
 	fixBeds(arg1, arg2);
 	fixDoubleChest(arg1, arg2, "double_normal.png");
 	fixDoubleChest(arg1, arg2, "trapped_double.png");
+	fixSingleChest(arg1, arg2, "ender.png");
+	fixSingleChest(arg1, arg2, "normal.png");
+	fixSingleChest(arg1, arg2, "trapped.png");
 }
 
 void fixBeds(char *arg1, char *arg2){
