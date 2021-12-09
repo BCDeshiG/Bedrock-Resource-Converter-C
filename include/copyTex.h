@@ -1,4 +1,4 @@
-// Include file for `convert.c`
+// Include file for `copyTex.c`
 
 #ifndef HEADER_INCLUDE_COPY
 #define HEADER_INCLUDE_COPY
