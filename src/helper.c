@@ -155,3 +155,29 @@ void rotate(unsigned char *img, const int q, int w, int h, int ch)
 	// Destroy old copy
 	free(tempIMG);
 }
+
+void flipUP(unsigned char *img, const int q, int w, int h, int ch)
+{
+	const int imgW = q*w*ch; // Width of source texture in bytes
+	const int imgSize = q*q*w*h*ch; // Size of region in bytes
+	int count = 0; // Number of bytes read
+	int pos = 0; // Position along row
+	int shift = 1; // Number of rows down
+
+	// Store copy of original
+	unsigned char *tempIMG = calloc(imgSize, sizeof(char));
+	memcpy(tempIMG, img, imgSize);
+
+	while (count < imgSize){
+		while (pos < imgW){ // Read a row of pixels
+			int next = imgSize-(shift*imgW); // Read from bottom
+			img[count] = tempIMG[pos+next];
+			pos++;
+			count++;
+		}
+		pos = 0; // Back to beginning of row
+		shift++; // Move onto next row
+	}
+	// Destroy old copy
+	free(tempIMG);
+}

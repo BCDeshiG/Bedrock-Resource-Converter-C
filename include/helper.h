@@ -14,4 +14,5 @@ char *crop(unsigned char *img, const int q, int qStat[4], int w, int ch);
 void pasteRegion(unsigned char *region, unsigned char *destIMG,
 	const int q, int qStat[4], int w, int ch);
 void rotate(unsigned char *img, const int q, int w, int h, int ch); // Rotate 180 degrees
+void flipUP(unsigned char *img, const int q, int w, int h, int ch); // Flip upside-down
 #endif

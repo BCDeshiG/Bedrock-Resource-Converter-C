@@ -79,23 +79,27 @@ void dcAuxLeft(unsigned char *img, char *chestType, char *outPath,
 
 	qStat[0] = 19, qStat[1] = 29, qStat[2] = 15, qStat[3] = 14; // New params
 	tempIMG = crop(img, q, qStat, w, ch); // Chest innards
+	flipUP(tempIMG, q, qStat[2], qStat[3], ch); // Flip upside-down
 	pasteRegion(tempIMG, outIMG, q, qStat, newW, ch); // Paste cropped region onto image
 	free(tempIMG); // Ready for next step
 
 	qStat[0] = 19, qStat[1] = 59; // New params
 	tempIMG = crop(img, q, qStat, w, ch); // Chest base
+	flipUP(tempIMG, q, qStat[2], qStat[3], ch); // Flip upside-down
 	qStat[1] = 14; // Shift region left
 	pasteRegion(tempIMG, outIMG, q, qStat, newW, ch); // Paste cropped region onto image
 	free(tempIMG); // Ready for next step
 
 	qStat[0] = 0, qStat[1] = 59; // New params
 	tempIMG = crop(img, q, qStat, w, ch); // Chest lid inside
+	flipUP(tempIMG, q, qStat[2], qStat[3], ch); // Flip upside-down
 	qStat[1] = 14; // Shift region left
 	pasteRegion(tempIMG, outIMG, q, qStat, newW, ch); // Paste cropped region onto image
 	free(tempIMG); // Ready for next step
 
 	qStat[0] = 0, qStat[1] = 29; // New params
 	tempIMG = crop(img, q, qStat, w, ch); // Chest lid top
+	flipUP(tempIMG, q, qStat[2], qStat[3], ch); // Flip upside-down
 	pasteRegion(tempIMG, outIMG, q, qStat, newW, ch); // Paste cropped region onto image
 	free(tempIMG); // Done pasting so no longer needed
 
@@ -129,12 +133,14 @@ void dcAuxRight(unsigned char *img, char *chestType, char *outPath,
 
 	qStat[1] = 14, qStat[2] = 15, qStat[3] = 14; // New params
 	tempIMG = crop(img, q, qStat, w, ch); // Chest lid top
+	flipUP(tempIMG, q, qStat[2], qStat[3], ch); // Flip upside-down
 	qStat[1] = 29; // Shift region right
 	pasteRegion(tempIMG, outIMG, q, qStat, newW, ch); // Paste cropped region onto image
 	free(tempIMG); // Ready for next step
 
 	qStat[1] = 44; // New params
 	tempIMG = crop(img, q, qStat, w, ch); // Chest lid inside
+	flipUP(tempIMG, q, qStat[2], qStat[3], ch); // Flip upside-down
 	qStat[1] = 14; // Shift region left
 	pasteRegion(tempIMG, outIMG, q, qStat, newW, ch); // Paste cropped region onto image
 	free(tempIMG); // Ready for next step
@@ -161,17 +167,17 @@ void dcAuxRight(unsigned char *img, char *chestType, char *outPath,
 
 	qStat[0] = 19, qStat[1] = 14, qStat[2] = 15, qStat[3] = 14; // New params
 	tempIMG = crop(img, q, qStat, w, ch); // Chest innards
+	flipUP(tempIMG, q, qStat[2], qStat[3], ch); // Flip upside-down
 	qStat[1] = 29; // Shift region right
 	pasteRegion(tempIMG, outIMG, q, qStat, newW, ch); // Paste cropped region onto image
 	free(tempIMG); // Ready for next step
 
 	qStat[0] = 19, qStat[1] = 44; // New params
 	tempIMG = crop(img, q, qStat, w, ch); // Chest base
+	flipUP(tempIMG, q, qStat[2], qStat[3], ch); // Flip upside-down
 	qStat[1] = 14; // Shift region left
 	pasteRegion(tempIMG, outIMG, q, qStat, newW, ch); // Paste cropped region onto image
 	free(tempIMG); // Ready for next step
-
-	// FIXME Possibly wrong bottom (flip other one instead)
 
 	qStat[0] = 33, qStat[1] = 0, qStat[2] = 14, qStat[3] = 10; // New params
 	tempIMG = crop(img, q, qStat, w, ch); // Chest bottom side
