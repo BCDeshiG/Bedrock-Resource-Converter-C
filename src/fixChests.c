@@ -9,7 +9,7 @@
 #include "stb_image/stb_image.h"
 #include "stb_image/stb_image_write.h"
 
-void fixDoubleChest(char *arg1, char *arg2, char *chest){
+void fixDoubleChests(char *arg1, char *arg2, char *chest){
 	// Path of input texture
 	char *innPath = calloc(strlen(chest)+24, sizeof(char));
 	strcpy(innPath, "/textures/entity/chest/");
@@ -212,7 +212,7 @@ void dcAuxRight(unsigned char *img, char *chestType, char *outPath,
 	free(outIMG);
 }
 
-void fixSingleChest(char *arg1, char *arg2, char *chest){
+void fixSingleChests(char *arg1, char *arg2, char *chest){
 	// Path of input texture
 	char *innPath = calloc(strlen(chest)+24, sizeof(char));
 	strcpy(innPath, "/textures/entity/chest/");
@@ -259,7 +259,7 @@ void chestAux(unsigned char *img, char *outPath, const int q, int w, int h, int 
 	pasteRegion(tempIMG, outIMG, q, qStat, w, ch); // Paste cropped region onto image
 	free(tempIMG); // Ready for next step
 
-	tempIMG = crop(img, q, qStat, w, ch); // Chest lid top
+	tempIMG = crop(img, q, qStat, w, ch); // Chest lid inside
 	flipUP(tempIMG, q, qStat[2], qStat[3], ch); // Flip upside-down
 	qStat[1] = 14; // Shift region left
 	pasteRegion(tempIMG, outIMG, q, qStat, w, ch); // Paste cropped region onto image

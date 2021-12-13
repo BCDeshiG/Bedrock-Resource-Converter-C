@@ -18,11 +18,14 @@
 
 void fixes(char *arg1, char *arg2){
 	fixBeds(arg1, arg2);
-	fixDoubleChest(arg1, arg2, "double_normal.png");
-	fixDoubleChest(arg1, arg2, "trapped_double.png");
-	fixSingleChest(arg1, arg2, "ender.png");
-	fixSingleChest(arg1, arg2, "normal.png");
-	fixSingleChest(arg1, arg2, "trapped.png");
+	fixDoubleChests(arg1, arg2, "double_normal.png");
+	fixDoubleChests(arg1, arg2, "trapped_double.png");
+	fixSingleChests(arg1, arg2, "ender.png");
+	fixSingleChests(arg1, arg2, "normal.png");
+	fixSingleChests(arg1, arg2, "trapped.png");
+	fixZombies(arg1, arg2, "zombie.png");
+	fixZombies(arg1, arg2, "husk.png");
+	fixDrowned(arg1, arg2);
 }
 
 void fixBeds(char *arg1, char *arg2){
@@ -107,7 +110,6 @@ void fixBeds(char *arg1, char *arg2){
 	free(outFolder);
 }
 
-// TODO Bed Feet
 void fixBedsAux(unsigned char *bed, const int q, int w, int h, int ch, char *outPath){
 	int qStat[4] = {22, 0, 44, 28}; // Crop parameters
 	unsigned char *tempIMG = crop(bed, q, qStat, w, ch); // Store cropped image
@@ -129,4 +131,106 @@ void fixBedsAux(unsigned char *bed, const int q, int w, int h, int ch, char *out
 	if (stbi_write_png(outPath, w, h, ch, bed, w*ch) == 0){
 		fprintf(stderr, "Could not save to '%s'\n", outPath);
 	}
+}
+
+void fixZombies(char *arg1, char *arg2, char *zombie){
+	// Path of input texture
+	char *innPath = calloc(strlen(zombie)+25, sizeof(char));
+	strcpy(innPath, "/textures/entity/zombie/");
+	strcat(innPath, zombie);
+
+	// Load texture
+	int w, h, ch;
+	unsigned char *img = getImageARG(arg1, innPath, &w, &h, &ch);
+	if (img == NULL){
+		fprintf(stderr, "Could not find '%s' file\n", zombie);
+		free(innPath); // Failed to load so not needed
+		return;
+	}
+	free(innPath); // Texture has been loaded
+
+	const int newSize = w*h*ch*2; // Double height
+	int qStat[4] = {0, 0, w, h}; // Paste in place
+	unsigned char *outIMG = calloc(newSize, sizeof(char));
+	pasteRegion(img, outIMG, 1, qStat, w, ch);
+
+	// Path of output texture
+	short newLen = strlen(arg2)+strlen(zombie);
+	char *outPath = calloc(newLen+42, sizeof(char));
+	strcpy(outPath, arg2);
+	strcat(outPath, "/assets/minecraft/textures/entity/zombie/");
+	strcat(outPath, zombie);
+
+	// Save result
+	if (stbi_write_png(outPath, w, h*2, ch, outIMG, w*ch) == 0){
+		fprintf(stderr, "Could not save to '%s'\n", outPath);
+	}
+	// Free up resources
+	stbi_image_free(img);
+	free(outIMG);
+	free(outPath);
+}
+
+void fixDrowned(char *arg1, char *arg2){
+	// Load texture
+	int w, h, ch;
+	char *innPath = "/textures/entity/zombie/drowned.tga";
+	unsigned char *drowned = getImageARG(arg1, innPath, &w, &h, &ch);
+	if (drowned == NULL){
+		fprintf(stderr, "Could not find 'drowned.tga' file\n");
+		return;
+	}
+
+	// Paths of output textures
+	char *outPath1 = calloc(strlen(arg2)+53, sizeof(char));
+	char *outPath2 = calloc(strlen(arg2)+65, sizeof(char));
+	strcpy(outPath1, arg2);
+	strcat(outPath1, "/assets/minecraft/textures/entity/zombie/");
+	strcpy(outPath2, outPath1);
+	strcat(outPath1, "drowned.png");
+	strcat(outPath2, "drowned_outer_layer.png");
+
+	// Save inner layer as png
+	if (stbi_write_png(outPath1, w, h, ch, drowned, w*ch) == 0){
+		fprintf(stderr, "Could not save to '%s'\n", outPath1);
+	}
+	free(outPath1); // Inner texture has been saved (probably)
+
+	// Construct outer layer
+	const int q = floor(w/64); // Resize scale
+	const int texSize = w*h*ch; // Size of texture in bytes
+	unsigned char *outer = calloc(texSize, sizeof(char)); // Outer layer
+
+	int qStat[4] = {0, 32, 32, 16}; // Crop parameters
+	unsigned char *tempIMG = crop(drowned, q, qStat, w, ch); // Drowned head
+	qStat[1] = 0; // Shift region left
+	pasteRegion(tempIMG, outer, q, qStat, w, ch); // Paste cropped region onto image
+	free(tempIMG); // Ready for next step
+
+	qStat[0] = 32, qStat[1] = 0, qStat[2] = 56, qStat[3] = 16; // New params
+	tempIMG = crop(drowned, q, qStat, w, ch); // Drowned upper body
+	qStat[0] = 16; // Shift region up
+	pasteRegion(tempIMG, outer, q, qStat, w, ch); // Paste cropped region onto image
+	free(tempIMG); // Ready for next step
+
+	qStat[0] = 48, qStat[2] = 16; // New params
+	tempIMG = crop(drowned, q, qStat, w, ch); // Drowned lower left
+	qStat[1] = 16; // Shift region right
+	pasteRegion(tempIMG, outer, q, qStat, w, ch); // Paste cropped region onto image
+	free(tempIMG); // Ready for final step
+
+	qStat[0] = 48, qStat[1] = 48; // New params
+	tempIMG = crop(drowned, q, qStat, w, ch); // Drowned lower right
+	qStat[1] = 32; // Shift region left
+	pasteRegion(tempIMG, outer, q, qStat, w, ch); // Paste cropped region onto image
+	free(tempIMG); // Procedure complete so no longer needed
+
+	// Save outer layer
+	if (stbi_write_png(outPath2, w, h, ch, outer, w*ch) == 0){
+		fprintf(stderr, "Could not save to '%s'\n", outPath2);
+	}
+	// Free up resources
+	stbi_image_free(drowned);
+	free(outer);
+	free(outPath2);
 }
