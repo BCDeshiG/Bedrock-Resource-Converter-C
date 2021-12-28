@@ -160,30 +160,47 @@ void parseManAUX(FILE *filePTR, char *arg2){
 	free(outSTR);
 }
 
-void parseEndText(char *arg1, char *arg2){
-	FILE *filePTR = getFileARG(arg1, "/credits/end.txt", "r");
+void parseEndText(char *arg1, char *arg2, char *text){
+	// Load input text file
+	char *innPath = calloc(strlen(text)+10, sizeof(char));
+	strcpy(innPath, "/credits/");
+	strcat(innPath, text);
+	FILE *filePTR = getFileARG(arg1, innPath, "r");
 
 	// Check if file exists
 	if (filePTR == NULL){
 		// Couldn't find it so skip
 		fprintf(stderr, "Could not find 'end.txt' file\n");
+		free(innPath); // Not needed
 	}
 	else {
+		free(innPath); // File has been loaded
+		// "quote.txt" becomes "postcredits.txt"
+		short newLen = strlen(text)+25;
+		if (!strcmp(text, "quote.txt")){
+			newLen += 6;
+			text = "postcredits.txt";
+		}
+		char *outPath = calloc(newLen, sizeof(char));
+		strcpy(outPath, "/assets/minecraft/texts/");
+		strcat(outPath, text);
+
 		// Copy contents of file
 		char *buffer = calloc(1024, sizeof(char));
-		FILE *outPTR = getFileARG(arg2, "/assets/minecraft/texts/end.txt", "w");
+		FILE *outPTR = getFileARG(arg2, outPath, "w");
 		if (outPTR != NULL){
 			while (fgets(buffer, 1024, filePTR) != NULL){
 				fputs(buffer, outPTR);
 			}
-			fclose(filePTR);
 			fclose(outPTR);
 		}
 		else{
-			fprintf(stderr, "Unable to copy 'end.txt' file\n");
+			fprintf(stderr, "Unable to copy '%s' file\n", text);
 		}
 
 		// Free up resources
+		fclose(filePTR);
+		free(outPath);
 		free(buffer);
 	}
 }

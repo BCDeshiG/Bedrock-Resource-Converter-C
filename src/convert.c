@@ -51,7 +51,9 @@ void startConversion(){
 	genFolders(arg2);
 	parseZip(arg1);
 	arg1 = parseManifest(arg1, arg2);
-	parseEndText(arg1, arg2);
+	parseEndText(arg1, arg2, "end.txt");
+	parseEndText(arg1, arg2, "quote.txt");
+	parseEndText(arg1, arg2, "credits.json");
 	parseSplashes(arg1, arg2);
 	copyTextures(arg1, arg2);
 	splitCompass(arg1, arg2, "watch_atlas.png");

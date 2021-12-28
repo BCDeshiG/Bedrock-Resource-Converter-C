@@ -47,7 +47,6 @@ void copyTextures(char *arg1, char *arg2){
 		else{ // PNG file so just copy bytes over
 			FILE *innPTR = fopen(innPath, "rb"); // File to be copied
 			if (innPTR == NULL){
-				//fprintf(stderr, "Unable to locate file: %s\n", innPath);
 				fprintf(missingPTR, "%s\n", innPath); // Note down missing texture
 				free(innPath);
 				free(outPath);

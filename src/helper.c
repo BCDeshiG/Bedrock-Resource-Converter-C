@@ -150,7 +150,7 @@ void rotate(unsigned char *img, const int q, int w, int h, int ch)
 			int next = imgSize-count-ch+i;
 			img[count+i] = tempIMG[next];
 		}
-		count+=ch;
+		count += ch;
 	}
 	// Destroy old copy
 	free(tempIMG);
