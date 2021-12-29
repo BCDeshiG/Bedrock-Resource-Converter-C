@@ -53,12 +53,19 @@ void fixBeds(char *arg1, char *arg2){
 	else{
 		while ((entry=readdir(dir))){ // Check all files in folder
 			if (count>=16){break;} // 16 bed textures
-			char *fileName = entry->d_name; // Store name of texture
-			if (fileName[0] != '.'){ // Filter out "." and ".." paths
+			// Store path of input texture
+			char *fileName = entry->d_name; // Name of texture within folder
+			unsigned short newLen = strlen(innFolder)+strlen(fileName);
+			char *tempPath = calloc(newLen+1, sizeof(char)); // Used to validate the image
+			strcpy(tempPath, innFolder);
+			strcat(tempPath, fileName);
+			// Filter out invalid texture paths
+			if (stbi_info(tempPath, NULL, NULL, NULL)){
 				bedNames[count] = calloc(strlen(fileName)+1, sizeof(char));
 				strcpy(bedNames[count], fileName); // Add file name to array
 				count++;
 			}
+			free(tempPath); // Image has been checked
 		}
 		closedir(dir); // Finished reading
 	}
