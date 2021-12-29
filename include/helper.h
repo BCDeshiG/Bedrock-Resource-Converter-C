@@ -16,4 +16,5 @@ void pasteRegion(unsigned char *region, unsigned char *destIMG,
 void rotate(unsigned char *img, const int q, int w, int h, int ch); // Rotate 180 degrees
 void flipUP(unsigned char *img, const int q, int w, int h, int ch); // Flip upside-down
 char *makeOpaque(unsigned char *img, int w, int h); // Sets alpha channel to 255
+void reportMissing(char *arg, char *path);
 #endif

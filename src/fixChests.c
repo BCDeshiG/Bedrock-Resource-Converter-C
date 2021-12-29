@@ -19,7 +19,7 @@ void fixDoubleChests(char *arg1, char *arg2, char *chest){
 	int w, h, ch;
 	unsigned char *img = getImageARG(arg1, innPath, &w, &h, &ch);
 	if (img == NULL){
-		fprintf(stderr, "Could not find '%s' file\n", chest);
+		reportMissing(arg1, innPath);
 		free(innPath); // Failed to load so not needed
 		return;
 	}
@@ -222,7 +222,7 @@ void fixSingleChests(char *arg1, char *arg2, char *chest){
 	int w, h, ch;
 	unsigned char *img = getImageARG(arg1, innPath, &w, &h, &ch);
 	if (img == NULL){
-		fprintf(stderr, "Could not find '%s' file\n", chest);
+		reportMissing(arg1, innPath);
 		free(innPath); // Failed to load so not needed
 		return;
 	}

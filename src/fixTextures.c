@@ -27,6 +27,8 @@ void fixes(char *arg1, char *arg2){
 	fixZombies(arg1, arg2, "husk.png");
 	fixDrowned(arg1, arg2);
 	fixSheep(arg1, arg2);
+	fixHoglins(arg1, arg2, "hoglin.png");
+	fixHoglins(arg1, arg2, "zoglin.png");
 }
 
 void fixBeds(char *arg1, char *arg2){
@@ -82,7 +84,7 @@ void fixBeds(char *arg1, char *arg2){
 		int w, h, ch;
 		unsigned char *img = stbi_load(innPath, &w, &h, &ch, 0);
 		if (img == NULL){
-			fprintf(stderr, "Could not find '%s' file\n", bedNames[i]);
+			reportMissing(arg1, innPath);
 			free(bedNames[i]); // Failed to load so not needed
 			free(innPath); // Failed to load so not needed
 			continue;
@@ -151,7 +153,7 @@ void fixZombies(char *arg1, char *arg2, char *zombie){
 	int w, h, ch;
 	unsigned char *img = getImageARG(arg1, innPath, &w, &h, &ch);
 	if (img == NULL){
-		fprintf(stderr, "Could not find '%s' file\n", zombie);
+		reportMissing(arg1, innPath);
 		free(innPath); // Failed to load so not needed
 		return;
 	}
@@ -185,7 +187,7 @@ void fixDrowned(char *arg1, char *arg2){
 	char *innPath = "/textures/entity/zombie/drowned.tga";
 	unsigned char *drowned = getImageARG(arg1, innPath, &w, &h, &ch);
 	if (drowned == NULL){
-		fprintf(stderr, "Could not find 'drowned.tga' file\n");
+		reportMissing(arg1, innPath);
 		return;
 	}
 
@@ -249,7 +251,7 @@ void fixSheep(char *arg1, char *arg2){
 	char *innPath = "/textures/entity/sheep/sheep.tga";
 	unsigned char *sheep = getImageARG(arg1, innPath, &w, &h, &ch);
 	if (sheep == NULL){
-		fprintf(stderr, "Could not find 'sheep.tga' file\n");
+		reportMissing(arg1, innPath);
 		return;
 	}
 
@@ -281,4 +283,45 @@ void fixSheep(char *arg1, char *arg2){
 	free(outPath2);
 	free(base);
 	free(wool);
+}
+
+void fixHoglins(char *arg1, char *arg2, char *hog){
+	// Path of input texture
+	char *innPath = calloc(strlen(hog)+35, sizeof(char));
+	strcpy(innPath, "/textures/entity/");
+	strncat(innPath, hog, 6); // Exclude file extension
+	strcat(innPath, "/"); // This is a folder
+	strcat(innPath, hog); // The filename itself
+
+	// Load texture
+	int w, h, ch;
+	unsigned char *hoglin = getImageARG(arg1, innPath, &w, &h, &ch);
+	if (hoglin == NULL){
+		reportMissing(arg1, innPath);
+		free(innPath); // Failed to load so not needed
+		return;
+	}
+	free(innPath); // Texture has been loaded
+
+	const int q = floor(w/128); // Resize scale
+	int qStat[4] = {13, 1, 8, 13}; // Crop parameters
+	unsigned char *tusk = crop(hoglin, q, qStat, w, ch);
+	qStat[1] = 10; // Shift down
+	pasteRegion(tusk, hoglin, q, qStat, w, ch);
+
+	// Path of output texture
+	short newLen = strlen(arg2)+strlen(hog);
+	char *outPath = calloc(newLen+42, sizeof(char));
+	strcpy(outPath, arg2);
+	strcat(outPath, "/assets/minecraft/textures/entity/hoglin/");
+	strcat(outPath, hog);
+
+	// Save result
+	if (stbi_write_png(outPath, w, h, ch, hoglin, w*ch) == 0){
+		fprintf(stderr, "Could not save to '%s'\n", outPath);
+	}
+	// Free up resources
+	stbi_image_free(hoglin);
+	free(tusk);
+	free(outPath);
 }

@@ -37,7 +37,7 @@ void splitCompass(char *arg1, char *arg2, char *atlas){
 	int w, h, ch;
 	unsigned char *img = stbi_load(innPath, &w, &h, &ch, 0);
 	if (img == NULL){
-		fprintf(stderr, "Could not find '%s' file\n", atlas);
+		reportMissing("", innPath);
 		free(innPath); // Failed to load so not needed
 		free(outPath); // Failed to load so not needed
 		return;
@@ -104,7 +104,7 @@ void splitPaintings(char *arg1, char *arg2){
 	int w, h, ch;
 	unsigned char *kz = stbi_load(innPath, &w, &h, &ch, 0);
 	if (kz == NULL){
-		fprintf(stderr, "Could not find paintings texture\n");
+		reportMissing("", innPath);
 		return;
 	}
 	free(innPath); // Atlas loaded

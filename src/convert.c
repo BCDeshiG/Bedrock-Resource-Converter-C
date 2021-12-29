@@ -87,7 +87,7 @@ void genFolders(char *arg2){
 void wrapUp(){
 	puts("\nConversion Complete");
 	puts("Please see 'fixme.txt' for textures that need attention");
-	FILE *checkPTR = fopen("../missing.txt", "r");
+	FILE *checkPTR = fopen("missing.txt", "r");
 	if (checkPTR != NULL){ // Check if missing.txt exists
 		fclose(checkPTR); // No need to read it
 		puts("\nSome files were missing from your texture pack and were not included.");

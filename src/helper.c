@@ -193,3 +193,16 @@ char *makeOpaque(unsigned char *img, int w, int h){
 	}
 	return outIMG;
 }
+
+void reportMissing(char *arg, char *path){
+	FILE *missingPTR = fopen("missing.txt", "a"); // Keep track of missing files
+	unsigned short newLen = strlen(arg)+strlen(path);
+	char *fPATH = calloc(newLen+1, sizeof(char)); // Store full path
+	strcpy(fPATH, arg);
+	strcat(fPATH, path);
+	//fprintf(stderr, "Unable to locate file: %s\n", path);
+	fprintf(missingPTR, "%s\n", fPATH); // Note down missing texture
+	// Free up resources
+	fclose(missingPTR);
+	free(fPATH);
+}

@@ -9,7 +9,7 @@
 #include "helper.h"
 
 void copyTextures(char *arg1, char *arg2){
-	FILE *missingPTR = fopen("../missing.txt", "w"); // Keep track of missing files
+	FILE *missingPTR = fopen("missing.txt", "w"); // Keep track of missing files
 	FILE *csvPTR = fopen("../textures.csv", "r"); // Table of bedrock/java file names
 	char buffer[160];
 	if (csvPTR == NULL){
