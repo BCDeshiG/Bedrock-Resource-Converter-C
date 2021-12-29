@@ -26,6 +26,7 @@ void fixes(char *arg1, char *arg2){
 	fixZombies(arg1, arg2, "zombie.png");
 	fixZombies(arg1, arg2, "husk.png");
 	fixDrowned(arg1, arg2);
+	fixSheep(arg1, arg2);
 }
 
 void fixBeds(char *arg1, char *arg2){
@@ -233,4 +234,44 @@ void fixDrowned(char *arg1, char *arg2){
 	stbi_image_free(drowned);
 	free(outer);
 	free(outPath2);
+}
+
+void fixSheep(char *arg1, char *arg2){
+	// Load texture
+	int w, h, ch;
+	char *innPath = "/textures/entity/sheep/sheep.tga";
+	unsigned char *sheep = getImageARG(arg1, innPath, &w, &h, &ch);
+	if (sheep == NULL){
+		fprintf(stderr, "Could not find 'sheep.tga' file\n");
+		return;
+	}
+
+	// Paths of output textures
+	char *outPath1 = calloc(strlen(arg2)+50, sizeof(char));
+	char *outPath2 = calloc(strlen(arg2)+54, sizeof(char));
+	strcpy(outPath1, arg2);
+	strcat(outPath1, "/assets/minecraft/textures/entity/sheep/");
+	strcpy(outPath2, outPath1);
+	strcat(outPath1, "sheep.png");
+	strcat(outPath2, "sheep_fur.png");
+
+	// Base sheep layer
+	const int q = floor(w/64); // Resize scale
+	unsigned char *base = makeOpaque(sheep, w, floor(h/2));
+	if (stbi_write_png(outPath1, w, floor(h/2), ch, base, w*ch) == 0){
+		fprintf(stderr, "Could not save to '%s'\n", outPath1);
+	}
+	free(outPath1); // Inner texture has been saved (probably)
+
+	// Wool layer
+	int qStat[4] = {32, 0, 64, 32}; // Crop parameters
+	unsigned char *wool = crop(sheep, q, qStat, w, ch);
+	if (stbi_write_png(outPath2, w, qStat[3]*q, ch, wool, w*ch) == 0){
+		fprintf(stderr, "Could not save to '%s'\n", outPath2);
+	}
+	// Free up resources
+	stbi_image_free(sheep);
+	free(outPath2);
+	free(base);
+	free(wool);
 }

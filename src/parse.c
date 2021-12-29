@@ -170,7 +170,7 @@ void parseEndText(char *arg1, char *arg2, char *text){
 	// Check if file exists
 	if (filePTR == NULL){
 		// Couldn't find it so skip
-		fprintf(stderr, "Could not find 'end.txt' file\n");
+		fprintf(stderr, "Could not find '%s' file\n", text);
 		free(innPath); // Not needed
 	}
 	else {

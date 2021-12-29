@@ -181,3 +181,15 @@ void flipUP(unsigned char *img, const int q, int w, int h, int ch)
 	// Destroy old copy
 	free(tempIMG);
 }
+
+char *makeOpaque(unsigned char *img, int w, int h){
+	int imgSize = w*h*4; // Size of image in bytes
+	int count = 0; // Number of bytes read
+
+	unsigned char *outIMG = calloc(imgSize, sizeof(char));
+	while (count < imgSize){
+		outIMG[count] = ((count+1)%4 == 0) ? 255 : img[count];
+		count++;
+	}
+	return outIMG;
+}
