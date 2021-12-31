@@ -29,6 +29,8 @@ void fixes(char *arg1, char *arg2){
 	fixSheep(arg1, arg2);
 	fixHoglins(arg1, arg2, "hoglin.png");
 	fixHoglins(arg1, arg2, "zoglin.png");
+	fixFoxes(arg1, arg2, "fox.png");
+	fixFoxes(arg1, arg2, "arctic_fox.png");
 }
 
 void fixBeds(char *arg1, char *arg2){
@@ -324,4 +326,124 @@ void fixHoglins(char *arg1, char *arg2, char *hog){
 	stbi_image_free(hoglin);
 	free(tusk);
 	free(outPath);
+}
+
+void fixFoxes(char *arg1, char *arg2, char *fox){
+	// Path of input texture
+	char *innPath = calloc(strlen(fox)+22, sizeof(char));
+	strcpy(innPath, "/textures/entity/fox/");
+	strcat(innPath, fox);
+
+	// Load texture
+	int w, h, ch;
+	unsigned char *img = getImageARG(arg1, innPath, &w, &h, &ch);
+	if (img == NULL){
+		reportMissing(arg1, innPath);
+		free(innPath); // Failed to load so not needed
+		return;
+	}
+	free(innPath); // Texture has been loaded
+
+	// Compose awake texture
+	const int q = floor(w/64); // Resize scale
+	const int newW = 48*q; // Scaled width of new texture
+	const int newH = 32*q; // Scaled height of new texture
+	const int texSize = newW*newH*ch; // Size of texture in bytes
+	unsigned char *woke = calloc(texSize, sizeof(char)); // Awake texture
+	int qStat[4] = {0, 28, 18, 14}; // Crop parameters
+	unsigned char *tempIMG = crop(img, q, qStat, w, ch); // Tail
+	qStat[1] = 30; // Shift right
+	pasteRegion(tempIMG, woke, q, qStat, newW, ch); // Paste cropped region onto image
+	free(tempIMG); // Ready for next step
+
+	qStat[0] = 15, qStat[1] = 30, qStat[2] = 24, qStat[3] = 17; // New params
+	tempIMG = crop(img, q, qStat, w, ch); // Body
+	qStat[1] = 24; // Shift left
+	pasteRegion(tempIMG, woke, q, qStat, newW, ch); // Paste cropped region onto image
+	free(tempIMG); // Ready for next step
+
+	qStat[0] = 24, qStat[1] = 22, qStat[2] = 8, qStat[3] = 8; // New params
+	tempIMG = crop(img, q, qStat, w, ch); // Foot
+	qStat[1] = 13; // Shift left
+	pasteRegion(tempIMG, woke, q, qStat, newW, ch); // Paste cropped region onto image
+	free(tempIMG); // Ready for next step
+
+	qStat[1] = 14; // New params
+	tempIMG = crop(img, q, qStat, w, ch); // Other Foot
+	qStat[1] = 4; // Shift left
+	pasteRegion(tempIMG, woke, q, qStat, newW, ch); // Paste cropped region onto image
+	free(tempIMG); // Ready for next step
+
+	qStat[0] = 24, qStat[1] = 0, qStat[2] = 14, qStat[3] = 5; // New params
+	tempIMG = crop(img, q, qStat, w, ch); // Nose
+	qStat[0] = 18, qStat[1] = 6; // Shift down + right
+	pasteRegion(tempIMG, woke, q, qStat, newW, ch); // Paste cropped region onto image
+	free(tempIMG); // Ready for next step
+
+	qStat[0] = 0, qStat[1] = 0, qStat[2] = 6, qStat[3] = 3; // New params
+	tempIMG = crop(img, q, qStat, w, ch); // Ear
+	qStat[0] = 1, qStat[1] = 8; // Shift down + right
+	pasteRegion(tempIMG, woke, q, qStat, newW, ch); // Paste cropped region onto image
+	free(tempIMG); // Ready for next step
+
+	qStat[0] = 0, qStat[1] = 22; // New params
+	tempIMG = crop(img, q, qStat, w, ch); // Other Ear
+	qStat[0] = 1, qStat[1] = 15; // Shift down + left
+	pasteRegion(tempIMG, woke, q, qStat, newW, ch); // Paste cropped region onto image
+	free(tempIMG); // Ready for next step
+
+	// Copy to asleep texture
+	unsigned char *slep = calloc(texSize, sizeof(char));
+	memcpy(slep, woke, texSize);
+
+	qStat[0] = 0, qStat[1] = 0, qStat[2] = 28, qStat[3] = 12; // New params
+	tempIMG = crop(img, q, qStat, w, ch); // Awake Head
+	qStat[0] = 5, qStat[1] = 1; // Shift down + right
+	pasteRegion(tempIMG, woke, q, qStat, newW, ch); // Paste cropped region onto image
+	free(tempIMG); // Ready for next step
+
+	qStat[0] = 12, qStat[1] = 0; // New params
+	tempIMG = crop(img, q, qStat, w, ch); // Asleep Head
+	qStat[0] = 5, qStat[1] = 1; // Shift up + right
+	pasteRegion(tempIMG, slep, q, qStat, newW, ch); // Paste cropped region onto image
+	free(tempIMG); // Done pasting
+
+	// Fix extra ears from pasting head
+	qStat[0] = 5, qStat[1] = 1, qStat[2] = 6, qStat[3] = 3; // New params
+	pasteRegion(NULL, woke, q, qStat, newW, ch); // Clear region
+	pasteRegion(NULL, slep, q, qStat, newW, ch); // Clear region
+	qStat[1] = 23; // New params
+	pasteRegion(NULL, woke, q, qStat, newW, ch); // Clear region
+	pasteRegion(NULL, slep, q, qStat, newW, ch); // Clear region
+
+	// arctic_fox becomes snow_fox
+	if (!strncmp(fox, "arctic", 6)){
+		fox = "snow_fox.png";
+	}
+
+	// Paths of output textures
+	unsigned short newLen = strlen(arg2)+strlen(fox);
+	char *outPath1 = calloc(newLen+39, sizeof(char));
+	char *outPath2 = calloc(newLen+45, sizeof(char));
+	strcpy(outPath1, arg2);
+	strcat(outPath1, "/assets/minecraft/textures/entity/fox/");
+	strncat(outPath1, fox, strlen(fox)-4);
+	strcpy(outPath2, outPath1);
+	strcat(outPath1, ".png");
+	strcat(outPath2, "_sleep.png");
+
+	// Save results
+	if (stbi_write_png(outPath1, newW, newH, ch, woke, newW*ch) == 0){
+		fprintf(stderr, "Could not save to '%s'\n", outPath1);
+	}
+	if (stbi_write_png(outPath2, newW, newH, ch, slep, newW*ch) == 0){
+		fprintf(stderr, "Could not save to '%s'\n", outPath2);
+	}
+
+	// Free up resources
+	stbi_image_free(img);
+	free(outPath1);
+	free(outPath2);
+	free(woke);
+	free(slep);
 }
