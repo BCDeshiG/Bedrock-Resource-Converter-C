@@ -1,7 +1,7 @@
 missing.txt
 *.zip
 *.mcpack
-src/obj/*.o
+*.o
 src/br-convert
 src/packs
 *.py
