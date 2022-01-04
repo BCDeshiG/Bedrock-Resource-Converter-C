@@ -31,6 +31,7 @@ void fixes(char *arg1, char *arg2){
 	fixHoglins(arg1, arg2, "zoglin.png");
 	fixFoxes(arg1, arg2, "fox.png");
 	fixFoxes(arg1, arg2, "arctic_fox.png");
+	fixDog(arg1, arg2);
 }
 
 void fixBeds(char *arg1, char *arg2){
@@ -446,4 +447,31 @@ void fixFoxes(char *arg1, char *arg2, char *fox){
 	free(outPath2);
 	free(woke);
 	free(slep);
+}
+
+void fixDog(char *arg1, char *arg2){
+	// Load texture
+	int w, h, ch;
+	char *innPath = "/textures/entity/wolf/wolf_tame.tga";
+	unsigned char *img = getImageARG(arg1, innPath, &w, &h, &ch);
+	if (img == NULL){
+		reportMissing(arg1, innPath);
+		return;
+	}
+	unsigned char *tame = makeOpaque(img, w, h);
+
+	// Path of output texture
+	char *outPath = calloc(strlen(arg2)+53, sizeof(char));
+	strcpy(outPath, arg2);
+	strcat(outPath, "/assets/minecraft/textures/entity/wolf/wolf_tame.png");
+
+	// Save results
+	if (stbi_write_png(outPath, w, h, ch, tame, w*ch) == 0){
+		fprintf(stderr, "Could not save to '%s'\n", outPath);
+	}
+
+	// Free up resources
+	stbi_image_free(img);
+	free(outPath);
+	free(tame);
 }

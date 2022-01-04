@@ -1161,6 +1161,7 @@
 /textures/entity/wither_boss/wither_invulnerable.png,/assets/minecraft/textures/entity/wither/wither_invulnerable.png
 /textures/entity/wolf/wolf.png,/assets/minecraft/textures/entity/wolf/wolf.png
 /textures/entity/wolf/wolf_angry.png,/assets/minecraft/textures/entity/wolf/wolf_angry.png
+/textures/entity/wolf/wolf_tame.tga,/assets/minecraft/textures/entity/wolf/wolf_collar.png
 /textures/entity/zombie_villager/zombie_villager.png,/assets/minecraft/textures/entity/zombie/zombie_villager.png
 /textures/entity/zombie_villager2/zombie-villager.png,/assets/minecraft/textures/entity/zombie_villager/zombie_villager.png
 /textures/entity/zombie_villager2/biomes/biome-desert-zombie.png,/assets/minecraft/textures/entity/zombie_villager/type/desert.png
