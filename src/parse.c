@@ -13,6 +13,7 @@
 void parseZip(char *arg1){
 	char *fileExt = strrchr(arg1, '.');	// Check file extension if present
 	if (fileExt == NULL){return;} // No dots in sight so probably folder
+	else if (fileExt[1] == '.' || fileExt[1] == '/'){return;} // Relative folder path
 	else if (!strcmp(fileExt, ".zip") || !strcmp(fileExt, ".mcpack")){
 		// Ensure containing folder
 		// FIXME Hacky solution, preferably don't use chdir
@@ -20,20 +21,17 @@ void parseZip(char *arg1){
 		short newLen = argLen-strlen(fileExt); // Length without file ext
 		char *folderPath = calloc(newLen+1, sizeof(char)); // Folder to extract to
 		memcpy(folderPath, arg1, newLen*sizeof(char)); // Copy bytes except file ext
-		stripCHAR(folderPath, '.'); // Ensure proper size
 		safe_create_dir(folderPath); // Create containing folder
 
 		// Determine if relative or absolute path
 		char *tempPath = calloc(argLen+5, sizeof(char));
-		switch (arg1[0]){
-			case '/': // Absolute path so just use that
-				strcpy(tempPath, arg1);
-				break;
-			default: // Relative path so correct for new dir
-				char dotDOT[] = "../";
-				strcpy(tempPath, dotDOT);
-				strcat(tempPath, arg1);
-				break;
+		if (arg1[0] == '/'){
+			strcpy(tempPath, arg1); // Absolute path so just use that
+		}
+		else{ // Relative path so correct for new dir
+			char dotDOT[] = "../";
+			strcpy(tempPath, dotDOT);
+			strcat(tempPath, arg1);
 		}
 
 		// Finally unzip archive
@@ -66,6 +64,7 @@ char *parseManifest(char *arg1, char *arg2){
 		DIR *dir = opendir(arg1); // Not in pack root folder so start searching
 		char *entry = calloc(128, sizeof(char)); // Store name of sub-directory
 		if (dir == NULL){
+			fprintf(stderr, "Unable to open folder '%s'\n", arg1);
 			free(manPath); // Failed to load so not needed
 			free(entry); // Failed to load so not needed
 			exit(1);
@@ -93,6 +92,7 @@ char *parseManifest(char *arg1, char *arg2){
 			// Check if manifest in 'folder'
 			filePTR = fopen(manPath, "r"); 
 			if(filePTR == NULL){ // Weird folder structure?
+				fprintf(stderr, "Unable to locate manifest\n");
 				free(manPath); // Failed to load so not needed
 				free(rootPath); // Failed to load so not needed
 				exit(1);
