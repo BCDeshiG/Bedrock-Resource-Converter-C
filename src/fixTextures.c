@@ -33,6 +33,8 @@ void fixes(char *arg1, char *arg2){
 	fixFoxes(arg1, arg2, "arctic_fox.png");
 	fixDog(arg1, arg2);
 	fixCat(arg1, arg2);
+	fixAzalea(arg1, arg2, "potted_azalea_bush_side.png");
+	fixAzalea(arg1, arg2, "potted_flowering_azalea_bush_side.png");
 }
 
 void fixBeds(char *arg1, char *arg2){
@@ -528,5 +530,49 @@ void fixCat(char *arg1, char *arg2){
 
 	// Free up resources
 	stbi_image_free(img);
+	free(outPath);
+}
+
+void fixAzalea(char *arg1, char *arg2, char *bush){
+	// Path of input texture
+	char *innPath = calloc(strlen(bush)+18, sizeof(char));
+	strcpy(innPath, "/textures/blocks/");
+	strcat(innPath, bush);
+
+	// Load texture
+	int w, h, ch;
+	unsigned char *img = getImageARG(arg1, innPath, &w, &h, &ch);
+	if (img == NULL){
+		reportMissing(arg1, innPath);
+		free(innPath); // Failed to load so not needed
+		return;
+	}
+	free(innPath); // Texture has been loaded
+
+	// Shift image down 1 row
+	const int regionSize = w*h*ch; // Size of image in bytes
+	const int rowSize = w*ch; // Size of row in bytes
+	unsigned char *outIMG = calloc(regionSize, sizeof(char));
+	int count = 0; // Number of bytes read
+	while (count+rowSize < regionSize){
+		outIMG[count+rowSize] = img[count];
+		count++;
+	}
+	stbi_image_free(img); // Done reading image
+
+	// Path of output texture
+	short newLen = strlen(arg2)+strlen(bush);
+	char *outPath = calloc(newLen+34, sizeof(char));
+	strcpy(outPath, arg2);
+	strcat(outPath, "/assets/minecraft/textures/block/");
+	strcat(outPath, bush);
+
+	// Save results
+	if (stbi_write_png(outPath, w, h, ch, outIMG, w*ch) == 0){
+		fprintf(stderr, "Could not save to '%s'\n", outPath);
+	}
+
+	// Free up resources
+	free(outIMG);
 	free(outPath);
 }
