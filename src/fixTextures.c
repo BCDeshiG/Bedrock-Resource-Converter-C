@@ -32,6 +32,7 @@ void fixes(char *arg1, char *arg2){
 	fixFoxes(arg1, arg2, "fox.png");
 	fixFoxes(arg1, arg2, "arctic_fox.png");
 	fixDog(arg1, arg2);
+	fixCat(arg1, arg2);
 }
 
 void fixBeds(char *arg1, char *arg2){
@@ -474,4 +475,58 @@ void fixDog(char *arg1, char *arg2){
 	stbi_image_free(img);
 	free(outPath);
 	free(tame);
+}
+
+void fixCat(char *arg1, char *arg2){
+	// Path of input folder
+	char *innPath = calloc(strlen(arg1)+22, sizeof(char));
+	strcpy(innPath, arg1);
+	strcat(innPath, "/textures/entity/cat/");
+
+	// Read folder contents
+	DIR *dir = opendir(innPath); // Check for cat textures
+	struct dirent *entry; // Store file name of cat
+	if (dir == NULL){
+		fprintf(stderr, "Could not load cat textures\n");
+		free(innPath); // Failed to load so not needed
+		return;
+	}
+	else{
+		while ((entry=readdir(dir))){ // Check all files in folder
+			char *fileName = entry->d_name; // Name of texture within folder
+			char *tempSTR = strstr(fileName, "tame");
+			if (tempSTR != NULL){ // Check if file name contains 'tame'
+				// Found a texture we can use for the collar
+				unsigned short newLen = strlen(innPath)+strlen(fileName);
+				innPath = realloc(innPath, (newLen+1)*sizeof(char));
+				strcat(innPath, fileName);
+				break;
+			}
+		}
+		closedir(dir); // Finished reading
+	}
+
+	// Load texture
+	int w, h, ch;
+	unsigned char *img = getImageARG("", innPath, &w, &h, &ch);
+	if (img == NULL){
+		reportMissing(arg1, innPath);
+		free(innPath); // Failed to load so not needed
+		return;
+	}
+	free(innPath); // Texture has been loaded
+
+	// Path of output texture
+	char *outPath = calloc(strlen(arg2)+53, sizeof(char));
+	strcpy(outPath, arg2);
+	strcat(outPath, "/assets/minecraft/textures/entity/cat/cat_collar.png");
+
+	// Save results
+	if (stbi_write_png(outPath, w, h, ch, img, w*ch) == 0){
+		fprintf(stderr, "Could not save to '%s'\n", outPath);
+	}
+
+	// Free up resources
+	stbi_image_free(img);
+	free(outPath);
 }
