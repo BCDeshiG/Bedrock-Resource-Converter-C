@@ -6,7 +6,7 @@
 #include <dirent.h>
 
 #include "parse.h"
-#include "extractZIP.h"
+#include "extractArchive.h"
 #include "helper.h"
 #include "cJSON.h"
 

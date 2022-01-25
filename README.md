@@ -10,7 +10,7 @@
 
 ## Libraries Used
 
-* [libzip](https://libzip.org/documentation/libzip.html)
+* [libarchive](https://github.com/libarchive/libarchive)
 * * Get this from your package manager
 * [cJSON](https://github.com/DaveGamble/cJSON)
 * * Included in source as a header file
