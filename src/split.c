@@ -105,6 +105,8 @@ void splitPaintings(char *arg1, char *arg2){
 	unsigned char *kz = stbi_load(innPath, &w, &h, &ch, 0);
 	if (kz == NULL){
 		reportMissing("", innPath);
+		free(innPath); // Failed to load so not needed
+		free(outPath); // Failed to load so not needed
 		return;
 	}
 	free(innPath); // Atlas loaded

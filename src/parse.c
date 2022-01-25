@@ -34,10 +34,13 @@ void parseZip(char *arg1){
 			strcat(tempPath, arg1);
 		}
 
+		// Remember current working directory
+		char cwDIR[4096];
+		getcwd(cwDIR, 4096);
 		// Finally unzip archive
 		chdir(folderPath); // Enter new folder
 		extract(tempPath); // Unzip contents into folder
-		chdir(".."); // Exit new folder
+		chdir(cwDIR); // Exit new folder
 
 		// No longer needed strings
 		free(folderPath);
@@ -62,39 +65,49 @@ char *parseManifest(char *arg1, char *arg2){
 	FILE *filePTR = fopen(manPath, "r");
 	if(filePTR == NULL){
 		DIR *dir = opendir(arg1); // Not in pack root folder so start searching
-		char *entry = calloc(128, sizeof(char)); // Store name of sub-directory
+		struct dirent *entry; // Stores file info
+		char *entryName = calloc(128, sizeof(char)); // Store name of sub-directory
 		if (dir == NULL){
 			fprintf(stderr, "Unable to open folder '%s'\n", arg1);
 			free(manPath); // Failed to load so not needed
-			free(entry); // Failed to load so not needed
+			free(entryName); // Failed to load so not needed
 			exit(1);
 		}
 		else{
-			// Lazy search for manifest
-			strcpy(entry, readdir(dir)->d_name); // Try to enter 1st thing we see
-			entry = realloc(entry, (strlen(entry)+1)*sizeof(char)); // Shrink to size
-			dirSPACES(entry); // Escape space from path
-			closedir(dir); // No longer need to look at whole folder
+			// Search sub-folders for manifest (only 1st level)
+			while ((entry=readdir(dir))){ // Check all files in folder
+				strcpy(entryName, entry->d_name); // Get name of file
 
-			// Kinda just assume what we found was a folder
-			manPath = realloc(manPath, argLen+strlen(entry)+16);
-			strcpy(manPath, arg1);
-			free(arg1); // Gonna replace this in a sec
-			strcat(manPath, "/");
-			strcat(manPath, entry);
-			free(entry); // No longer needed
+				// Kinda just assume what we found was a folder
+				short newLen = argLen+strlen(entryName);
+				manPath = realloc(manPath, (newLen+16)*sizeof(char));
+				strcpy(manPath, arg1);
+				strcat(manPath, "/");
+				strcat(manPath, entryName);
 
-			// Remember folder path
-			rootPath = calloc(strlen(manPath)+1, sizeof(char));
-			strcpy(rootPath, manPath);
-			strcat(manPath, "/manifest.json");
+				// Remember folder path
+				rootPath = calloc(strlen(manPath)+1, sizeof(char));
+				strcpy(rootPath, manPath);
+				strcat(manPath, "/manifest.json");
 
-			// Check if manifest in 'folder'
-			filePTR = fopen(manPath, "r"); 
+				// Check if manifest in 'folder'
+				filePTR = fopen(manPath, "r");
+				if(filePTR != NULL){ // Found it
+					free(arg1); // Gonna replace this in a sec
+					break;
+				}
+				// Didn't find it in this sub-folder so keep going
+				//free(manPath);
+				free(rootPath);
+			}
+			// Free up resources
+			closedir(dir); // Done searching
+			free(entryName); // No longer needed
+
 			if(filePTR == NULL){ // Weird folder structure?
 				fprintf(stderr, "Unable to locate manifest\n");
-				free(manPath); // Failed to load so not needed
-				free(rootPath); // Failed to load so not needed
+				free(arg1); // Failed to load so not needed
+				free(arg2); // Failed to load so not needed
 				exit(1);
 			}
 		}
@@ -150,6 +163,7 @@ void parseManAUX(FILE *filePTR, char *arg2){
 	// Write to output file
 	FILE *outPTR = getFileARG(arg2, "/pack.mcmeta", "w");
 	if (outPTR == NULL){
+		free(outSTR); // Couldn't write this
 		fprintf(stderr, "Unable to write output file\n");
 		exit(1);
 	}
